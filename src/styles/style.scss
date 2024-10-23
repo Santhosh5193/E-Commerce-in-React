@@ -1,0 +1,53 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
+//fonts
+.InterFont {
+  font-family: "Inter", serif;
+  font-weight: 700;
+  font-style: normal;
+}
+.PoppinsFont {
+  align-items: center;
+  font-family: "Poppins", sans-serif;
+}
+
+//navbar
+.searchbar {
+  width: 27rem;
+}
+//footer
+.fooText {
+  font-weight: 400;
+  line-height: 30px;
+  color: #d6d6d6;
+}
+
+@media (max-width: 768px) {
+  nav {
+    padding: 1rem;
+  }
+
+  .menu-button {
+    display: block;
+  }
+
+  .mobile-menu {
+    display: none;
+  }
+
+  .searchbar {
+    margin: 0 auto; /* Center the search bar */
+  }
+}
+
+@media (min-width: 769px) {
+  .menu-button {
+    display: none;
+  }
+
+  .mobile-menu {
+    display: none;
+  }
+}
+@import "navbar";
+@import "footer";
