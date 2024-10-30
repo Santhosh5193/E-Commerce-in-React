@@ -1,14 +1,16 @@
-import fbicon from "../assests/icons/fbicon.png";
-import insta from "../assests/icons/insta.png";
-import twitter from "../assests/icons/twitter.png";
-import linkedin from "../assests/icons/in.png";
-import mailsend from "../assests/icons/mailsend.png";
+import fbicon from "../assets/icons/fbicon.png";
+import insta from "../assets/icons/insta.png";
+import twitter from "../assets/icons/twitter.png";
+import linkedin from "../assets/icons/in.png";
+import mailsend from "../assets/icons/mailsend.png";
 
 function Footer() {
   return (
     <div className="flex flex-wrap justify-evenly bg-black sm:px-8 py-6 py-16 md:flex max-[530px]:px-10">
       <div className="first w-full items-center ssm:w-1/2 sm:w-1/2 md:w-1/3 lg:w-1/5 mb-8">
-        <h3 className="text-light-white text-2xl InterFont mb-2">Exclusive</h3>
+        <h3 className="text-light-white text-2xl InterFont font-bold mb-2">
+          Exclusive
+        </h3>
         <h4 className="text-light-white PoppinsFont font-semibold">
           Subscribe
         </h4>
@@ -21,7 +23,7 @@ function Footer() {
             className="outline-none pl-3 bg-inherit text-white w-full"
             placeholder="Enter your email"
           />
-          <label htmlFor="email" className="flex-none">
+          <label htmlFor="email" className="flex-none px-2 py-1">
             <img src={mailsend} alt="" />
           </label>
         </div>

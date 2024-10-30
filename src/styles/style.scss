@@ -3,11 +3,11 @@
 //fonts
 .InterFont {
   font-family: "Inter", serif;
-  font-weight: 700;
-  font-style: normal;
+  // font-weight: 700;
+  // font-style: normal;
 }
 .PoppinsFont {
-  align-items: center;
+  // align-items: center;
   font-family: "Poppins", sans-serif;
 }
 
@@ -49,7 +49,29 @@
 //     display: none;
 //   }
 // }
-@import "home";
-@import "footer";
+@import "./home";
+// // @import "footer";
 
+//home styles
 
+// .listfont {
+//   font-family: "Poppins", sans-serif;
+//   font-weight: 400;
+//   font-size: 16px;
+//   color: #000000;
+// }
+
+// .carouselbutton {
+//   width: 10px;
+//   height: 10px;
+//   background: white;
+//   border-radius: 50%;
+// }
+
+// .carouselButtonFill {
+//   width: 10px;
+//   height: 10px;
+//   background: rgb(180, 20, 20);
+//   border-radius: 50%;
+//   border: 2px solid white;
+// }
