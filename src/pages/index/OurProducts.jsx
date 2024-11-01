@@ -7,44 +7,17 @@ import Star from "../../assets/FlashSales/images/star.svg";
 import Keyboard from "../../assets/FlashSales/images/Keyboard.svg";
 import Wishlisticon from "../../assets/svg/Wishlisticon";
 import Viewicon from "../../assets/svg/Viewicon";
-function Flahsales() {
+function OurProducts() {
   return (
-    <div className="border-b-2 py-8">
+    <div className="py-8">
       <div className="head flex gap-3 items-center pb-5">
         <div className="h-10 w-5 bg-secondary rounded-md"></div>
-        <h3 className="text-red-600 PoppinsFont font-semibold">Today's</h3>
+        <h3 className="text-red-600 PoppinsFont font-semibold">Our Products</h3>
       </div>
       <div className="flex justify-between">
         <div className="crad-head flex pb-5  gap-[89px]">
           <div className="Title InterFont text-4xl font-medium">
-            <h3>Flash Sales</h3>
-          </div>
-          <div className="Timer flex gap-6">
-            <div className="days">
-              <p className="PoppinsFont text-xs">Days</p>
-              <div className="flex gap-6">
-                <span className="InterFont font-bold text-[32px]">03</span>
-                <p className="text-2xl text-secondary font-semibold">:</p>
-              </div>
-            </div>
-            <div className="Hours">
-              <p className="PoppinsFont text-xs">Hours</p>
-              <div className="flex gap-6">
-                <span className="InterFont font-bold text-[32px]">23</span>
-                <p className="text-2xl text-secondary font-semibold">:</p>
-              </div>
-            </div>
-            <div className="Minutes">
-              <p className="PoppinsFont text-xs">Minutes</p>
-              <div className="flex gap-6">
-                <span className="InterFont font-bold text-[32px]">19</span>
-                <p className="text-2xl text-secondary font-semibold">:</p>
-              </div>
-            </div>
-            <div className="Seconds">
-              <p className="PoppinsFont text-xs">Seconds</p>
-              <span className="InterFont font-bold text-[32px]">53</span>
-            </div>
+            <h3>Explore Our Products</h3>
           </div>
         </div>
         <div className="arrows flex gap-3">
@@ -103,4 +76,4 @@ function Flahsales() {
   );
 }
 
-export default Flahsales;
+export default OurProducts;

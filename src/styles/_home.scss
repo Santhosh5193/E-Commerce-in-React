@@ -25,3 +25,10 @@
 .text-secondary {
   color: #db4444;
 }
+
+.responsive-image {
+  width: 100%;
+  max-width: 200px;
+  height: auto;
+  object-fit: cover;
+}
