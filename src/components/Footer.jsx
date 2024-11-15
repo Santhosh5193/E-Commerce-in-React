@@ -3,10 +3,13 @@ import insta from "../assets/icons/insta.png";
 import twitter from "../assets/icons/twitter.png";
 import linkedin from "../assets/icons/in.png";
 import mailsend from "../assets/icons/mailsend.png";
+import QrCode from "../assets/icons/Qrcode.svg";
+import Appstore from "../assets/icons/AppStore.svg";
+import Googlestore from "../assets/icons/GooglePlay.svg";
 
 function Footer() {
   return (
-    <div className="flex flex-wrap justify-evenly bg-black sm:px-8 py-6 py-16 md:flex max-[530px]:px-10">
+    <div className="flex flex-wrap justify-evenly bg-black pl-8 sm:px-8 py-6 md:flex max-[530px]:px-10">
       <div className="first w-full items-center ssm:w-1/2 sm:w-1/2 md:w-1/3 lg:w-1/5 mb-8">
         <h3 className="text-light-white text-2xl InterFont font-bold mb-2">
           Exclusive
@@ -60,9 +63,16 @@ function Footer() {
       </div>
       <div className="last w-full ssm:w-1/2 sm:w-1/3 md:w-1/3 lg:w-1/5 mb-8">
         <h3 className="text-light-white PoppinsFont font-semibold">Donwload</h3>
-        <p className="text-light-white fooText">
+        <p className="text-light-white fooText pb-2">
           Save $3 with App New User Only
         </p>
+        <div className="flex gap-3">
+          <img src={QrCode} alt="" />
+          <div className="flex flex-col gap-1">
+            <img src={Appstore} alt="" />
+            <img src={Googlestore} alt="" />
+          </div>
+        </div>
         <ul className="flex gap-5 mt-4">
           <li>
             <img className="" src={fbicon} alt="" />

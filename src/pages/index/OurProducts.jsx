@@ -60,8 +60,8 @@ function OurProducts() {
               </div>
             </div>
             <div className="star flex gap-2 py-1">
-              {[1, 2, 3, 4, 5].map(() => {
-                return <img src={Star} alt="" />;
+              {[1, 2, 3, 4, 5].map((_, index) => {
+                return <img src={Star} alt="" key={index} />;
               })}
             </div>
           </div>

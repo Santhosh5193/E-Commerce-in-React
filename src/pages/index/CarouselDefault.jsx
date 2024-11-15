@@ -18,7 +18,7 @@ function CarouselDefault() {
   }, [currentIndex]);
 
   return (
-    <div className="relative">
+    <div className="relative ">
       <div>
         <img className="h-[45vh]" src={images[currentIndex]} />
       </div>

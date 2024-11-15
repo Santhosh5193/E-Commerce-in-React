@@ -50,28 +50,14 @@
 //   }
 // }
 @import "./home";
-// // @import "footer";
 
-//home styles
-
-// .listfont {
-//   font-family: "Poppins", sans-serif;
-//   font-weight: 400;
-//   font-size: 16px;
-//   color: #000000;
-// }
-
-// .carouselbutton {
-//   width: 10px;
-//   height: 10px;
-//   background: white;
-//   border-radius: 50%;
-// }
-
-// .carouselButtonFill {
-//   width: 10px;
-//   height: 10px;
-//   background: rgb(180, 20, 20);
-//   border-radius: 50%;
-//   border: 2px solid white;
-// }
+.UserMenu {
+  background-image: linear-gradient(
+    to right top,
+    #000000,
+    #391726,
+    #6b244f,
+    #9d3384,
+    #c949c4
+  );
+}

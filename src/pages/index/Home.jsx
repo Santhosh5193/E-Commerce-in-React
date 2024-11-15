@@ -4,14 +4,13 @@ import Categories from "./Categories";
 import SellingProducts from "./SellingProducts";
 import FrameAddimg from "../../assets/images/FrameAdd.png";
 import OurProducts from "./OurProducts";
-import Featured from "../Featured";
-
+import Featured from "./Featured";
 
 function Home() {
   return (
-    <div className="px-16">
-      <div className="flex gap-24 py-5">
-        <div className="border-r-2 pr-28">
+    <div className="sm:px-16 px-7">
+      <div className="lg:flex gap-24 py-5">
+        <div className="lg:block hidden border-r-2 pr-28">
           <ul className="listfont leading-9 text-nowrap">
             <li className="">Men's Fashion</li>
             <li className="">Women's Fashion</li>
@@ -74,26 +73,6 @@ function Home() {
       </div>
       <OurProducts />
       <Featured />
-      {/* <div className="grid grid-cols-2 grid-rows-2 gap-x-6 gap-y-6">
-        <div className="">
-          <img
-            src={ArraivalImg1}
-            alt=""
-            // className="w-full h-full object-cover"
-          />
-        </div>
-        <div className="grid grid-rows-2 grid-cols-2 gap-0">
-          <div className="bg-gray-300 col-span-2">
-            <img src={ArraivalImg2} alt="" />
-          </div>
-          <div className="bg-gray-400">
-            <img src={ArraivalImg3} alt="" />
-          </div>
-          <div className="bg-gray-500">
-            <img src={ArraivalImg4} alt="" />
-          </div>
-        </div>
-      </div> */}
     </div>
   );
 }
