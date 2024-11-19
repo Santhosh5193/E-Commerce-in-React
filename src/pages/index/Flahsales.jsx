@@ -17,16 +17,17 @@ function Flahsales() {
   const flashImages = [gamepad, Keyboard, Gamingmoniter, Chair, Chair];
 
   const [timeLeft, setTimeLeft] = useState({
-    days: 0,
+    days: 3,
     hours: 0,
     minutes: 0,
     seconds: 0,
   });
 
+  //Fetch data from firebase
   useEffect(() => {
     const fetchProductData = async () => {
       try {
-        const querySnapshot = await getDocs(collection(db, "products"));
+        const querySnapshot = await getDocs(collection(db, "Products"));
         const products = querySnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
@@ -40,31 +41,32 @@ function Flahsales() {
     fetchProductData();
   }, []);
 
-  //Count down
-  // useEffect(() => {
-  //   const targetDate = new Date("2024-11-18T23:59:59").getTime(); // Replace with your target date
+  // Count down
+  useEffect(() => {
+    const calculateTimeLeft = () => {
+      const currentTime = new Date().getTime();
+      const endTime = startTime + 3 * 24 * 60 * 60 * 1000;
+      const difference = endTime - currentTime;
 
-  //   const calculateTimeLeft = () => {
-  //     const currentTime = new Date().getTime();
-  //     const difference = targetDate - currentTime;
+      if (difference > 0) {
+        const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
+        const minutes = Math.floor((difference / (1000 * 60)) % 60);
+        const seconds = Math.floor((difference / 1000) % 60);
 
-  //     if (difference > 0) {
-  //       const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-  //       const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
-  //       const minutes = Math.floor((difference / (1000 * 60)) % 60);
-  //       const seconds = Math.floor((difference / 1000) % 60);
+        setTimeLeft({ days, hours, minutes, seconds });
+      } else {
+        setStartTime(new Date().getTime());
+      }
+    };
 
-  //       setTimeLeft({ days, hours, minutes, seconds });
-  //     } else {
-  //       clearInterval(interval);
-  //     }
-  //   };
+    const startTime = new Date().getTime();
+    const interval = setInterval(calculateTimeLeft, 1000);
 
-  //   const interval = setInterval(calculateTimeLeft, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
-  //   return () => clearInterval(interval);
-  // }, []);
-
+  //Scrolling section
   const cardsRef = useRef(null);
 
   // Function to scroll left
@@ -81,13 +83,6 @@ function Flahsales() {
     }
   };
 
-  // useEffect(() => {
-  //   productData.forEach((details, index) => {
-  //     console.log(details.productName);
-  //   });
-  // }, [productData]);
-
-  console.log(productData);
   return (
     <div className="border-b-2 py-8">
       <div className="head flex gap-3 items-center pb-5">
@@ -163,53 +158,61 @@ function Flahsales() {
         className="cards pb-5 flex overflow-x-hidden space-x-5"
         ref={cardsRef}
       >
-        {productData.map((product) => (
-          <div key={product.id}>
-            <div className=" card-1 relative w-[270px] h-[340px] rounded-md border-2">
-              <div className="card-head  bg-gray-100  h-[250px] flex justify-center items-center ">
-                <img src={gamepad} alt="" className="w-[190px] h-[180px]" />
-              </div>
-              <div className="card-body p-2">
-                <div className="">
-                  <h2 className=""> {product.productName}</h2>
-                  <div className="rate flex gap-3">
-                    <h2 className="text-red-500">${product.price}</h2>
-                    <h2 className="line-through">$160</h2>
-                    <div className="absolute  bg-white top-3 right-3 rounded-full">
-                      <div className="w-9 h-9 flex justify-center items-center ">
-                        <Wishlisticon />
+        {productData
+          .filter((product) => product.type === "flashsales")
+          .map((product) => (
+            <div key={product.id}>
+              <div className=" card-1 relative w-[270px] h-[360px] rounded-md border-2">
+                <div className="card-head border-b-2  h-[250px] flex justify-center items-center ">
+                  <img
+                    src={product.image[0]}
+                    alt=""
+                    className="w-[80%] h-[70%] object-contain"
+                  />
+                </div>
+                <div className="card-body p-2">
+                  <div className="">
+                    <h2 className="font-medium"> {product.productName}</h2>
+                    <div className="rate flex gap-3">
+                      <h2 className="text-red-500">${product.price}</h2>
+                      <h2 className="line-through">$160</h2>
+                      <div className="absolute  bg-white top-3 right-3 rounded-full">
+                        <div className="w-9 h-9 flex justify-center items-center ">
+                          <Wishlisticon />
+                        </div>
+                      </div>
+                      <div className="absolute  bg-white top-14 right-3 rounded-full">
+                        <div className="w-9 h-9 flex justify-center items-center ">
+                          <Link to="/productview">
+                            <Viewicon />
+                          </Link>
+                        </div>
+                      </div>
+                      <div className="absolute bg-secondary text-white top-2 left-2 rounded-md px-3 py-1">
+                        <div className="flex justify-center items-center ">
+                          <p className="tracking-wider text-sm">
+                            {product.offer}
+                          </p>
+                        </div>
                       </div>
                     </div>
-                    <div className="absolute  bg-white top-14 right-3 rounded-full">
-                      <div className="w-9 h-9 flex justify-center items-center ">
-                        <Link to="/productview">
-                          <Viewicon />
-                        </Link>
-                      </div>
+                    <div className="star flex gap-2 py-1">
+                      {product?.ratings.map((star) => (
+                        <img src={Star} key={star} />
+                      ))}
                     </div>
-                    <div className="absolute bg-secondary text-white top-2 left-2 rounded-md px-3 py-1">
-                      <div className="flex justify-center items-center ">
-                        <p className="tracking-wider text-sm">
-                          -{product.offer}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="star flex gap-2 py-1">
-                    {product.ratings.map((star) => (
-                      <img src={Star} key={star} />
-                    ))}
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
       </div>
       <div className=" flex justify-center">
-        <button className=" PoppinsFont bg-secondary py-2 rounded-md  w-[230px] text-white text-base">
-          View All Products
-        </button>
+        <Link to="/products">
+          <button className=" PoppinsFont bg-secondary py-2 rounded-md  w-[230px] text-white text-base">
+            View All Products
+          </button>
+        </Link>
       </div>
     </div>
   );

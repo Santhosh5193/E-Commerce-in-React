@@ -23,18 +23,21 @@ function Navbar() {
   };
 
   return (
-    <nav className="border-b-2 md:px-10 pt-5 pb-2 ">
-      <div className="flex flex-col ssm:flex-row md:justify-between justify-evenly items-center gap-5">
-        <div className="flex justify-around ssm:w-10 md:w-1/2">
+    <nav className="border-b-2 md:px-10 pt-5 pb-2 ssm:px-10">
+      <div className="flex flex-col ssm:flex-row md:justify-between md:items-center justify-between items-center gap-5">
+        <div className="flex md:flex-col lg:flex-row justify-around ssm:w-10 md:w-1/2">
           <div className="">
             <h3 className="InterFont font-bold md:text-2xl text-xl">
               Exclusive
             </h3>
           </div>
-          <div className="hidden md:flex gap-x-11 md:gap-x-11 items-center">
-            <ul className="flex PoppinsFont text-base lg:gap-12 md:gap-5 ">
+          <div className="hidden md:flex items-center">
+            <ul className="flex PoppinsFont text-base xlg:gap-12 md:space-x-3 ">
               <li>
                 <Link to="/">Home</Link>
+              </li>
+              <li>
+                <Link to="/products">Products</Link>
               </li>
               <li>
                 <Link to="/contact">Contact</Link>
@@ -49,8 +52,8 @@ function Navbar() {
           </div>
         </div>
 
-        <div className="flex w-1/2 items-center md:gap-3 lg:gap-5 gap-5">
-          <form className="lg:w-96 md:w-90   bg-light-greyy border-none rounded-2 px-3 py-2">
+        <div className="flex w-1/2 justify-center items-center md:gap-3 lg:gap-5 gap-5">
+          <form className="lg:w-90 md:w-90    bg-light-greyy border-none rounded-2 px-3 py-2">
             <div className="flex items-center gap-8 md:flex lg:flex">
               <label htmlFor="search">
                 <img src={Vector} alt="search icon" />

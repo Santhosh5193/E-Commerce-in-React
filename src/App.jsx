@@ -14,6 +14,9 @@ import CheckOut from "./pages/CheckOut";
 import Notfoundpage from "./pages/Notfoundpage";
 import Quantity from "./components/Quantity";
 import ProductView from "./pages/ProductView";
+// import Sample from "./pages/Sample";
+import Imageupload from "./pages/Imageupload";
+import Products from "./pages/Products";
 
 function App() {
   return (
@@ -28,10 +31,15 @@ function App() {
         <Route path="/cart" element={<Cart />} />
         <Route path="/cart/checkout" element={<CheckOut />} />
         <Route path="/about" element={<Aboutpage />} />
-        <Route path="/about" element={<Quantity />} />
-        <Route path="/contact" element={<Contact />} />
+        {/* <Route path="/contact" element={<Contact />} /> */}
         <Route path="/productview" element={<ProductView />} />
+        <Route path="/products" element={<Products />} />
         <Route path="/*" element={<Notfoundpage />} />
+
+        {/* for sample */}
+        {/* <Route path="/about" element={<Quantity />} /> */}
+        {/* <Route path="/login" element={<Sample />} /> */}
+        <Route path="/contact" element={<Imageupload />} />
       </Routes>
       <Footer />
     </div>

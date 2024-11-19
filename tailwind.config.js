@@ -4,6 +4,10 @@ export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ["Poppins", "san-serif"],
+        inter: ["Inter", "san-serif"],
+      },
       width: {
         130: "55rem",
       },
@@ -21,6 +25,7 @@ export default {
       sm: "640px",
       md: "768px",
       lg: "1024px",
+      xlg: "1150px",
     },
   },
   plugins: [],

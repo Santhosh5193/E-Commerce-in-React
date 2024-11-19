@@ -57,23 +57,23 @@ function ProductView() {
           ))}
         </div>
 
-        {productData.map((item) => (
-          <div className="flex flex-wrap">
-            {item.images.map((img, index) => (
-              <div
-                key={index}
-                className="flex items-center justify-center flex-grow lg:w-1/2 md:w-1/2 md:h-[600px] sm:w-[85%] sm:h-[400px] h-[200px] rounded-lg"
-                style={{ background: "#F5F5F5" }}
-              >
-                <img
-                  src="https://unsplash.com/photos/a-person-using-a-laptop-computer-on-a-table--jXG8UoBJLI"
-                  alt={"Product image"}
-                  className="lg:w-[90%] lg:h-[234px] md:w-[80%] w-[60%] h-[315px] object-contain"
-                />
-              </div>
-            ))}
+        {/* {productData.map((item) => ( */}
+        <div className="flex flex-wrap">
+          {/* {item.images.map((img, index) => ( */}
+          <div
+            // key={index}
+            className="flex items-center justify-center flex-grow lg:w-1/2 md:w-1/2 md:h-[600px] sm:w-[85%] sm:h-[400px] h-[200px] rounded-lg"
+            style={{ background: "#F5F5F5" }}
+          >
+            <img
+              src={Productview1}
+              alt={"Product image"}
+              className="lg:w-[90%] lg:h-[234px] md:w-[80%] w-[60%] h-[315px] object-contain"
+            />
           </div>
-        ))}
+          {/* ))} */}
+        </div>
+        {/* ))} */}
 
         <div className="flex-grow lg:w-1/2 md:w-1/2">
           {productData.length > 0 && (
