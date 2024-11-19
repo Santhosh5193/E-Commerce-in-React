@@ -83,8 +83,9 @@ function SellingProducts() {
       </div>
 
       <div
-        className="cards pb-5 flex overflow-x-hidden space-x-5"
+        className="cards pb-5 flex overflow-x-auto space-x-5"
         ref={cardsRef}
+        style={{ scrollbarWidth: "none" }}
       >
         {productData
           .filter((product) => product.type === "flashsales")

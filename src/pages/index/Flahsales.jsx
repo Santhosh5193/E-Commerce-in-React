@@ -1,20 +1,18 @@
 import rightArrow from "../../assets/FlashSales/images/Arrowright.svg";
 import leftArrow from "../../assets/FlashSales/images/Arrowleft.svg";
-import Chair from "../../assets/FlashSales/images/chair.svg";
-import gamepad from "../../assets/FlashSales/images/gamepad.svg";
-import Gamingmoniter from "../../assets/FlashSales/images/Gamingmoniter.svg";
 import Star from "../../assets/FlashSales/images/star.svg";
-import Keyboard from "../../assets/FlashSales/images/Keyboard.svg";
 import Wishlisticon from "../../assets/svg/Wishlisticon";
 import Viewicon from "../../assets/svg/Viewicon";
 import { Link } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../../firebase";
+import { useContext } from "react";
+import ExclusiveContext from "../../context/ExclusiveContext";
 
 function Flahsales() {
   const [productData, setProductData] = useState([]);
-  const flashImages = [gamepad, Keyboard, Gamingmoniter, Chair, Chair];
+  const { productView, setProductView } = useContext(ExclusiveContext);
 
   const [timeLeft, setTimeLeft] = useState({
     days: 3,
@@ -68,19 +66,19 @@ function Flahsales() {
 
   //Scrolling section
   const cardsRef = useRef(null);
-
-  // Function to scroll left
   const scrollLeft = () => {
     if (cardsRef.current) {
       cardsRef.current.scrollBy({ left: -300, behavior: "smooth" });
     }
   };
-
-  // Function to scroll right
   const scrollRight = () => {
     if (cardsRef.current) {
       cardsRef.current.scrollBy({ left: 300, behavior: "smooth" });
     }
+  };
+
+  const handleWishlist = (id) => {
+    setProductView(id);
   };
 
   return (
@@ -155,8 +153,9 @@ function Flahsales() {
       </div>
 
       <div
-        className="cards pb-5 flex overflow-x-hidden space-x-5"
+        className="cards pb-5 flex overflow-x-auto space-x-5"
         ref={cardsRef}
+        style={{ scrollbarWidth: "none" }}
       >
         {productData
           .filter((product) => product.type === "flashsales")
@@ -174,15 +173,19 @@ function Flahsales() {
                   <div className="">
                     <h2 className="font-medium"> {product.productName}</h2>
                     <div className="rate flex gap-3">
-                      <h2 className="text-red-500">${product.price}</h2>
-                      <h2 className="line-through">$160</h2>
+                      <h2 className="text-red-500">₹{product.price}</h2>
+                      <h2 className="line-through">₹{product.originalPrice}</h2>
                       <div className="absolute  bg-white top-3 right-3 rounded-full">
                         <div className="w-9 h-9 flex justify-center items-center ">
                           <Wishlisticon />
                         </div>
                       </div>
                       <div className="absolute  bg-white top-14 right-3 rounded-full">
-                        <div className="w-9 h-9 flex justify-center items-center ">
+                        <div
+                          className="w-9 h-9 flex justify-center items-center cursor-pointer"
+                          id={product.id}
+                          onClick={() => handleWishlist(product.id)}
+                        >
                           <Link to="/productview">
                             <Viewicon />
                           </Link>

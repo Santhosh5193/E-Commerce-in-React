@@ -15,7 +15,7 @@ function Featured() {
           <div className="h-10 w-5 bg-secondary rounded-md"></div>
           <h3 className="text-red-600 PoppinsFont font-semibold">Featured's</h3>
         </div>
-        <div className="Title InterFont sm:text-4xl text-2xl font-medium sm:pb-14 pb-4">
+        <div className="Title InterFont sm:text-4xl text-2xl font-medium sm:pb-10 pb-4">
           <h3>New Arrival</h3>
         </div>
 
@@ -39,10 +39,10 @@ function Featured() {
             <div className="relative h-[50%]">
               <img src={ArraivalImg2} className="w-full h-full" alt="" />
               <div className="absolute sm:bottom-3 bottom-5 left-5">
-                <h2 className="text-white sm:text-3xl  font-semibold InterFont sm:mb-1">
+                <h2 className="text-white sm:text-xl md:text-3xl font-semibold InterFont sm:mb-1">
                   Womens Collection
                 </h2>
-                <p className="text-gray-300 text-xs sm:text-lg mb-1">
+                <p className="text-gray-300 text-xs md:text-lg mb-1">
                   Featured woman collections that <br />
                   give you another vibe.
                 </p>
@@ -59,10 +59,10 @@ function Featured() {
                   alt=""
                 />
                 <div className="absolute sm:bottom-3 bottom-5 left-5">
-                  <h2 className="text-white sm:text-3xl  font-semibold InterFont sm:mb-1">
+                  <h2 className="text-white sm:text-xl md:text-2xl lg:text-3xl  font-semibold InterFont sm:mb-1">
                     Speakers
                   </h2>
-                  <p className="text-gray-200 text-xs sm:text-lg">
+                  <p className="text-gray-200 text-xs md:text-lg">
                     Amazon wireless speakers
                   </p>
                   <p className="text-gray-100 underline underline-offset-4">
@@ -77,10 +77,10 @@ function Featured() {
                   alt=""
                 />
                 <div className="absolute sm:bottom-3 bottom-5 left-5">
-                  <h2 className="text-white sm:text-3xl  font-semibold InterFont sm:mb-1">
+                  <h2 className="text-white sm:text-xl md:text-2xl lg:text-3xl  font-semibold InterFont sm:mb-1">
                     Perfume
                   </h2>
-                  <p className="text-gray-200 text-xs sm:text-lg">
+                  <p className="text-gray-200 text-xs md:text-lg">
                     GUCCI INTENSE UOD EDP
                   </p>
                   <p className="text-gray-100 underline underline-offset-4">

@@ -10,7 +10,10 @@ function Imageupload() {
 
   const handleImageUpload = async (event) => {
     const files = event.target.files;
-    if (!files.length) return;
+    if (files.length > 3) {
+      event.target.files = "";
+      return;
+    }
 
     setLoading(true);
     const uploadedUrls = []; // Array to store uploaded image URLs
@@ -52,19 +55,19 @@ function Imageupload() {
       return;
     }
 
- const productData = {
-   productName: "NIKON Z 50 Mirrorless Camera",
-   description:
-     "Compact and lightweight mirrorless camera with a 20.9 MP DX-format sensor, 4K UHD video recording, and built-in Wi-Fi for stunning photos and videos. Ideal for creators on the go.",
-   offerPrice: 85999.99,
-   originalPrice: 90000,
-   offer: "4% OFF",
-   image: imageUrl, 
-   ratings: [1, 2, 3, 4, 5],
-   stockLeft: 20,
-   category: "electronics",
-   type: "Explore-Products",
- };
+    const productData = {
+      productName: "NIKON Z 50 Mirrorless Camera",
+      description:
+        "Compact and lightweight mirrorless camera with a 20.9 MP DX-format sensor, 4K UHD video recording, and built-in Wi-Fi for stunning photos and videos. Ideal for creators on the go.",
+      offerPrice: 85999.99,
+      originalPrice: 90000,
+      offer: "4% OFF",
+      image: imageUrl,
+      ratings: [1, 2, 3, 4, 5],
+      stockLeft: 20,
+      category: "electronics",
+      type: "Explore-Products",
+    };
     // const productData = {
     //   image: imageUrl,
     //   name: "HeadPhones",
@@ -85,6 +88,7 @@ function Imageupload() {
         type="file"
         accept="image/*"
         onChange={handleImageUpload}
+        max={3}
       />
       {loading ? (
         <p>Uploading...</p>
