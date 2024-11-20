@@ -17,11 +17,13 @@ import ProductView from "./pages/ProductView";
 // import Sample from "./pages/Sample";
 import Imageupload from "./pages/Imageupload";
 import Products from "./pages/Products";
+import ScrollingTop from "./components/ScrollingTop";
 
 function App() {
   return (
     <div>
       <Navbar />
+      <ScrollingTop />
       <Routes>
         <Route path="/" element={<Navigate to="/home" />} />
         <Route path="/home" element={<Home />} />

@@ -3,7 +3,11 @@ import { Link } from "react-router-dom";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
 import { auth } from "../../firebase";
+import { getAuth } from "firebase/auth";
 import Swal from "sweetalert2";
+import { useContext } from "react";
+import ExclusiveContext from "../context/ExclusiveContext";
+import { useNavigate } from "react-router-dom";
 
 const initialFormValues = {
   email: "",
@@ -12,10 +16,13 @@ const initialFormValues = {
 
 function Loginpage() {
   const [formValues, setFormValues] = useState(initialFormValues);
+  const { userId, setUserId } = useContext(ExclusiveContext);
   const [errors, setErrors] = useState({});
   const emailValidation =
     /^[a-z0-9._%+-]+@(gmail\.com|yahoo\.com|outlook\.com)$/;
   const upperCase = /[A-Z]/;
+  const auth = getAuth();
+  const navigate = useNavigate();
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
@@ -31,10 +38,6 @@ function Loginpage() {
     });
     setErrors(formErrors);
     submitToFireBase();
-    // if (Object.keys(formErrors).length === 0) {
-    //   console.log("Form Submitted:", formValues);
-    //   setFormValues(initialFormValues);
-    // }
   };
 
   const handlechange = (e) => {
@@ -110,16 +113,15 @@ function Loginpage() {
           timer: 1500,
         });
         setFormValues(initialFormValues);
+
+        setTimeout(() => {
+          navigate("/");
+        }, 1500);
       })
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
         console.log(errorMessage);
-        // Swal.fire({
-        //   icon: "error",
-        //   title: "Oops...",
-        //   text: "Something went wrong!",
-        // });
       });
   };
 

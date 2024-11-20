@@ -3,16 +3,23 @@ import leftArrow from "../../assets/FlashSales/images/Arrowleft.svg";
 import Star from "../../assets/FlashSales/images/star.svg";
 import Wishlisticon from "../../assets/svg/Wishlisticon";
 import Viewicon from "../../assets/svg/Viewicon";
+import Wishlistcarticon from "../../assets/icons/Wishlisticon1.svg";
 import { Link } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, addDoc } from "firebase/firestore";
 import { db } from "../../../firebase";
 import { useContext } from "react";
 import ExclusiveContext from "../../context/ExclusiveContext";
 
 function Flahsales() {
   const [productData, setProductData] = useState([]);
-  const { productView, setProductView } = useContext(ExclusiveContext);
+  const { productView, setProductView, setUserId, userId } =
+    useContext(ExclusiveContext);
+  const [hoveredProductId, setHoveredProductId] = useState(null);
+
+  const handleCartHover = (id) => {
+    setHoveredProductId(id);
+  };
 
   const [timeLeft, setTimeLeft] = useState({
     days: 3,
@@ -79,6 +86,15 @@ function Flahsales() {
 
   const handleWishlist = (id) => {
     setProductView(id);
+  };
+
+  //add Items to cart
+  const handleAddToCart = (id) => {
+    if (userId) {
+      console.log(userId);
+    } else {
+      console.log("userId");
+    }
   };
 
   return (
@@ -160,18 +176,36 @@ function Flahsales() {
         {productData
           .filter((product) => product.type === "flashsales")
           .map((product) => (
-            <div key={product.id}>
-              <div className=" card-1 relative w-[270px] h-[360px] rounded-md border-2">
-                <div className="card-head border-b-2  h-[250px] flex justify-center items-center ">
+            <div
+              key={product.id}
+              onMouseEnter={() => handleCartHover(product.id)}
+              onMouseLeave={() => setHoveredProductId(null)}
+            >
+              <div className=" card-1 relative w-[270px]  rounded-md border-2">
+                <div className="card-head relative h-[270px] flex flex-col justify-center items-center border-b-2">
                   <img
                     src={product.image[0]}
                     alt=""
-                    className="w-[80%] h-[70%] object-contain"
+                    tabIndex="0"
+                    className="w-[80%] h-[70%] object-contain cursor-pointer"
                   />
+                  <button
+                    className={`w-full absolute bottom-0 flex justify-center gap-3 py-2  bg-black text-white transition-all duration-300 ${
+                      hoveredProductId === product.id
+                        ? "visible opacity-100"
+                        : "invisible opacity-0"
+                    } `}
+                    onClick={() => handleAddToCart(product.id)}
+                  >
+                    <img src={Wishlistcarticon} alt="" />
+                    <p className="">Add To Cart</p>
+                  </button>
                 </div>
                 <div className="card-body p-2">
                   <div className="">
-                    <h2 className="font-medium"> {product.productName}</h2>
+                    <h2 className="font-medium inline-block w-[230px] truncate">
+                      {product.productName}
+                    </h2>
                     <div className="rate flex gap-3">
                       <h2 className="text-red-500">₹{product.price}</h2>
                       <h2 className="line-through">₹{product.originalPrice}</h2>

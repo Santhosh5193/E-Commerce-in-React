@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import Vector from "../assets/icons/Vector.png";
 import Cart1 from "../assets/icons/Cart1.png";
-import { useState } from "react";
+import { useState, useRef, useContext, useEffect } from "react";
 import Wishlisticon from "../assets/svg/Wishlisticon";
 import Carticon from "../assets/svg/Carticon";
 import { GiHamburgerMenu } from "react-icons/gi";
@@ -11,15 +11,42 @@ import mallbag from "../assets/icons/Mallbag.svg";
 import cancel from "../assets/icons/cancel.svg";
 import logout from "../assets/icons/Logout.svg";
 import review from "../assets/icons/Reviews.svg";
+import ExclusiveContext from "../context/ExclusiveContext";
+import { getAuth, signOut } from "firebase/auth";
+import Swal from "sweetalert2";
 
 function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const { userId } = useContext(ExclusiveContext);
+  const auth = getAuth();
+
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
-  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const userMenu = () => {
     setIsUserMenuOpen(!isUserMenuOpen);
+  };
+  const handleClose = () => {
+    setIsUserMenuOpen(!isUserMenuOpen);
+  };
+
+  // Logout
+  const handleLogout = () => {
+    if (userId) {
+      signOut(auth)
+        .then(() => {
+          Swal.fire({
+            icon: "success",
+            title: "Successfully Logout",
+            showConfirmButton: false,
+            timer: 1500,
+          });
+        })
+        .catch((error) => {
+          // An error happened.
+        });
+    }
   };
 
   return (
@@ -45,9 +72,6 @@ function Navbar() {
               <li>
                 <Link to="/about">About</Link>
               </li>
-              <li>
-                <Link to="/login">SignUp</Link>
-              </li>
             </ul>
           </div>
         </div>
@@ -67,7 +91,7 @@ function Navbar() {
               />
             </div>
           </form>
-          <div className="hidden md:flex md:gap-2 lg:gap-5">
+          <div className="hidden md:flex items-center md:gap-2 lg:gap-5">
             <div className="Wishlist">
               <Link to="/wishlist">
                 <Wishlisticon />
@@ -92,20 +116,32 @@ function Navbar() {
               <div
                 className={`${
                   isUserMenuOpen ? "block" : "hidden"
-                } absolute right-0 z-10 mt-2 w-56 UserMenu origin-top-right rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none`}
+                }  absolute right-0 z-10 mt-2 w-56 UserMenu origin-top-right rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none`}
                 role="menu"
                 aria-orientation="vertical"
                 aria-labelledby="menu-button"
                 tabIndex="-1"
+                onClick={handleClose}
               >
                 <div className="py-1" role="none">
-                  <Link
-                    to="/"
-                    className="flex gap-4 items-center  px-4 py-2 text-sm PoppinsFont text-white"
-                  >
-                    <img src={user} alt="" />
-                    Manage My Account
-                  </Link>
+                  {userId ? (
+                    <Link
+                      to="/"
+                      className="flex gap-4 items-center  px-4 py-2 text-sm PoppinsFont text-white"
+                    >
+                      <img src={user} alt="" />
+                      Manage My Account
+                    </Link>
+                  ) : (
+                    <Link
+                      to="/login"
+                      className="flex gap-4 items-center  px-4 py-2 text-sm PoppinsFont text-white"
+                    >
+                      <img src={user} alt="" />
+                      Login Account
+                    </Link>
+                  )}
+
                   <Link
                     to="/"
                     className="flex gap-4 items-center px-4 py-2 text-sm PoppinsFont text-white"
@@ -127,13 +163,22 @@ function Navbar() {
                     <img src={review} alt="" />
                     My Review
                   </Link>
-                  <Link
+                  {userId && (
+                    <div
+                      className="flex gap-4 items-center px-4 py-2 text-sm PoppinsFont text-white cursor-pointer"
+                      onClick={handleLogout}
+                    >
+                      <img src={logout} alt="" />
+                      Logout
+                    </div>
+                  )}
+                  {/* <Link
                     to="/"
                     className="flex gap-4 items-center px-4 py-2 text-sm PoppinsFont text-white"
                   >
                     <img src={logout} alt="" />
                     Logout
-                  </Link>
+                  </Link> */}
                 </div>
               </div>
             </div>
@@ -163,9 +208,11 @@ function Navbar() {
           <li className="p-2">
             <Link to="/about">About</Link>
           </li>
-          <li className="p-2">
-            <Link to="/signup">Sign Up</Link>
-          </li>
+          {!userId && (
+            <li className="p-2">
+              <Link to="/signup">Sign Up</Link>
+            </li>
+          )}
           <li className="p-2">
             <Link to="/wishlist">
               <Wishlisticon />

@@ -1,6 +1,11 @@
 import Gamemouse from "../assets/SellingProducts/images/Gamemouse.png";
+import { useContext } from "react";
+import ExclusiveContext from "../context/ExclusiveContext";
+import { useState } from "react";
 
 function CheckOut() {
+  const { productView, setProductView } = useContext(ExclusiveContext);
+
   return (
     <section className="py-10 px-16">
       <div className="">
