@@ -1,8 +1,21 @@
 import { Link } from "react-router-dom";
-import Gamemouse from "../assets/SellingProducts/images/Gamemouse.png";
+// import Gamemouse from "../assets/SellingProducts/images/Gamemouse.png";
 import Quantity from "../components/Quantity";
+import { useContext, useEffect, useState } from "react";
+import ExclusiveContext from "../context/ExclusiveContext";
 
 function Cart() {
+  const { productData, setIncrement } = useContext(ExclusiveContext);
+  const [totalPrice, setTotalPrice] = useState(0);
+
+  useEffect(() => {
+    const total = productData.reduce((acc, item) => {
+      const price = parseFloat(item.offerPrice);
+      return acc + (isNaN(price) ? 0 : price);
+    }, 0);
+    setTotalPrice(total.toFixed(2));
+  }, [productData]);
+
   return (
     <section className="py-10 px-16 ">
       <div className="">
@@ -11,6 +24,7 @@ function Cart() {
             Home / <span className="font-medium">Cart</span>
           </h2>
         </header>
+
         <div className="flex justify-center ">
           <table className="w-[80%] mb-10 text-center border-separate border-spacing-y-8">
             <thead>
@@ -21,30 +35,26 @@ function Cart() {
                 <th className="pb-4">Subtotal</th>
               </tr>
             </thead>
-            <tbody>
-              <tr className="shadow-md rounded-md bg-white p-4">
-                <td className="flex gap-2 items-center justify-center p-4">
-                  <img src={Gamemouse} alt="LCD Monitor" className="w-10" />
-                  <p>LCD Monitor</p>
-                </td>
-                <td>$560</td>
-                <td>
-                  <Quantity />
-                </td>
-                <td>$650</td>
-              </tr>
-              <tr className="shadow-md rounded-md bg-white p-4">
-                <td className="flex gap-2 items-center justify-center p-4">
-                  <img src={Gamemouse} alt="LCD Monitor" className="w-10" />
-                  <p>LCD Monitor</p>
-                </td>
-                <td>$150</td>
-                <td>
-                  <Quantity />
-                </td>
-                <td>$800</td>
-              </tr>
-            </tbody>
+            {productData &&
+              productData.map((cartlist) => (
+                <tbody key={cartlist.id}>
+                  <tr className="shadow-md rounded-md bg-white p-4">
+                    <td className="flex gap-2 items-center p-4 pl-10">
+                      <img
+                        src={cartlist.image[0]}
+                        alt="LCD Monitor"
+                        className="w-10"
+                      />
+                      <p>{cartlist.productName}</p>
+                    </td>
+                    <td>₹{cartlist.offerPrice}</td>
+                    <td>
+                      <Quantity />
+                    </td>
+                    <td>₹{cartlist.offerPrice}</td>
+                  </tr>
+                </tbody>
+              ))}
           </table>
         </div>
       </div>
@@ -53,7 +63,7 @@ function Cart() {
           <h2 className="font-medium mb-3">Cart Total</h2>
           <div className="border-b-2 mb-2 flex justify-between">
             <p className="">Subtotal</p>
-            <p className="">$1450</p>
+            <p className="">₹{totalPrice}</p>
           </div>
           <div className="border-b-2 mb-2 flex justify-between">
             <p className="">Shipping</p>
@@ -61,7 +71,7 @@ function Cart() {
           </div>
           <div className=" flex justify-between">
             <p className="">Total</p>
-            <p className="">$1450</p>
+            <p className="">₹{totalPrice}</p>
           </div>
           <div
             className="rounded w-[70%] mx-auto py-2 mt-5 text-center "

@@ -13,12 +13,14 @@ import logout from "../assets/icons/Logout.svg";
 import review from "../assets/icons/Reviews.svg";
 import ExclusiveContext from "../context/ExclusiveContext";
 import { getAuth, signOut } from "firebase/auth";
+import OustsideClick from "./OustsideClick";
 import Swal from "sweetalert2";
 
 function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const { userId } = useContext(ExclusiveContext);
+  const wrapperRef = useRef(null);
   const auth = getAuth();
 
   const toggleMenu = () => {
@@ -30,6 +32,9 @@ function Navbar() {
   const handleClose = () => {
     setIsUserMenuOpen(!isUserMenuOpen);
   };
+
+  //usermenu close automatically when i click outside
+  OustsideClick(wrapperRef, () => setIsUserMenuOpen(false));
 
   // Logout
   const handleLogout = () => {
@@ -102,7 +107,7 @@ function Navbar() {
                 <Carticon />
               </Link>
             </div>
-            <div className="relative inline-block text-left">
+            <div className="relative inline-block text-left" ref={wrapperRef}>
               <div
                 className={`w-10 h-10 flex items-center justify-center rounded-full ${
                   isUserMenuOpen ? "bg-red-500" : "bg-none"

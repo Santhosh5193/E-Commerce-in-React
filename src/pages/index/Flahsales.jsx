@@ -5,71 +5,49 @@ import Wishlisticon from "../../assets/svg/Wishlisticon";
 import Viewicon from "../../assets/svg/Viewicon";
 import Wishlistcarticon from "../../assets/icons/Wishlisticon1.svg";
 import { Link } from "react-router-dom";
-import { useEffect, useState, useRef } from "react";
-import { collection, getDocs, addDoc } from "firebase/firestore";
+import { useEffect, useState, useRef, useContext } from "react";
+import {
+  collection,
+  getDoc,
+  setDoc,
+  addDoc,
+  getDocs,
+  updateDoc,
+  arrayUnion,
+  doc,
+} from "firebase/firestore";
 import { db } from "../../../firebase";
-import { useContext } from "react";
 import ExclusiveContext from "../../context/ExclusiveContext";
+import { getAuth, onAuthStateChanged } from "@firebase/auth";
 
 function Flahsales() {
-  const [productData, setProductData] = useState([]);
-  const { productView, setProductView, setUserId, userId } =
-    useContext(ExclusiveContext);
+  const {
+    setProductView,
+    timeLeft,
+    productData,
+    cartlistProducts,
+    setCartlistProducts,
+  } = useContext(ExclusiveContext);
+  const auth = getAuth();
   const [hoveredProductId, setHoveredProductId] = useState(null);
+  // const [cartlistProducts, setCartlistProducts] = useState([]);
+  const [chechCartList, setCheckCartList] = useState(false);
 
   const handleCartHover = (id) => {
+    const isproductInCartlist = cartlistProducts.some(
+      (cartlistProducts) => cartlistProducts === id
+    );
     setHoveredProductId(id);
+    if (isproductInCartlist) {
+      setCheckCartList(true);
+    } else {
+      setCheckCartList(false);
+    }
   };
 
-  const [timeLeft, setTimeLeft] = useState({
-    days: 3,
-    hours: 0,
-    minutes: 0,
-    seconds: 0,
-  });
-
-  //Fetch data from firebase
-  useEffect(() => {
-    const fetchProductData = async () => {
-      try {
-        const querySnapshot = await getDocs(collection(db, "Products"));
-        const products = querySnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setProductData(products);
-      } catch (error) {
-        console.error("Error fetching product data:", error);
-      }
-    };
-
-    fetchProductData();
-  }, []);
-
-  // Count down
-  useEffect(() => {
-    const calculateTimeLeft = () => {
-      const currentTime = new Date().getTime();
-      const endTime = startTime + 3 * 24 * 60 * 60 * 1000;
-      const difference = endTime - currentTime;
-
-      if (difference > 0) {
-        const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
-        const minutes = Math.floor((difference / (1000 * 60)) % 60);
-        const seconds = Math.floor((difference / 1000) % 60);
-
-        setTimeLeft({ days, hours, minutes, seconds });
-      } else {
-        setStartTime(new Date().getTime());
-      }
-    };
-
-    const startTime = new Date().getTime();
-    const interval = setInterval(calculateTimeLeft, 1000);
-
-    return () => clearInterval(interval);
-  }, []);
+  const handleCartHoverLeave = () => {
+    setHoveredProductId(null);
+  };
 
   //Scrolling section
   const cardsRef = useRef(null);
@@ -88,14 +66,112 @@ function Flahsales() {
     setProductView(id);
   };
 
-  //add Items to cart
-  const handleAddToCart = (id) => {
-    if (userId) {
-      console.log(userId);
-    } else {
-      console.log("userId");
+  // create a Cartlist
+  const createCartForUser = async (userId) => {
+    const wishlistRef = doc(db, "Cartlist", userId); // Reference to the user's wishlist
+
+    try {
+      const wishlistDoc = await getDoc(wishlistRef);
+
+      if (wishlistDoc.exists()) {
+        const wishlistData = wishlistDoc.data(); // Get the document data
+        const productList = wishlistData.products || []; // Get the 'products' array (default to empty array if not present)
+
+        // Extract the IDs of items in the 'products' array
+        const productIds = productList.map((item) => item.id); // Assuming each product has an 'id' field
+
+        // console.log("Product IDs:", productIds);
+        setCartlistProducts(productIds);
+        return productIds; // Return the array of product IDs
+      } else {
+        console.log("No wishlist found for this user.");
+        return [];
+      }
+    } catch (error) {
+      console.error("Error fetching wishlist:", error.message);
+      return [];
     }
   };
+
+  useEffect(() => {
+    const checkAuthAndCreateCart = () => {
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          createCartForUser(user.uid);
+        } else {
+          console.log("User is not signed in");
+        }
+      });
+    };
+
+    checkAuthAndCreateCart();
+  }, [auth]);
+
+  // Add Items to Cart
+  const handleAddToCart = async (productId) => {
+    const userId = auth.currentUser?.uid;
+    if (!userId) {
+      console.log("User not logged in");
+      return;
+    }
+
+    const product = productData.find((item) => item.id === productId);
+    if (!product) {
+      console.error("Product not found");
+      return;
+    }
+
+    const cartRef = doc(db, "Cartlist", userId);
+    try {
+      const cartDoc = await getDoc(cartRef);
+      if (cartDoc.exists()) {
+        const existingProducts = cartDoc.data().products || [];
+        const isProductInCart = existingProducts.some(
+          (item) => item.productId === productId
+        );
+
+        if (isProductInCart) {
+          console.log("Product already in the cart");
+        } else {
+          await updateDoc(cartRef, {
+            products: arrayUnion({ productId, ...product }),
+          });
+          console.log("Product added to existing cart");
+          setCartlistProducts((prev) => [...prev, productId]);
+        }
+      } else {
+        await setDoc(cartRef, {
+          products: [{ productId, ...product }],
+        });
+        console.log("New cart created and product added");
+        setCartlistProducts((prev) => [...prev, productId]);
+      }
+    } catch (error) {
+      console.error("Error adding to cart:", error.message);
+    }
+  };
+  useEffect(() => {
+    const fetchCartStatus = async () => {
+      const userId = auth.currentUser?.uid;
+      if (!userId) return;
+
+      const cartRef = doc(db, "Cartlist", userId);
+      try {
+        const cartDoc = await getDoc(cartRef);
+        if (cartDoc.exists()) {
+          const existingProducts = cartDoc.data().products || [];
+          const isProductInCart = existingProducts.some(
+            (item) => item.productId === productData.id
+          );
+          setCheckCartList(isProductInCart);
+        }
+      } catch (error) {
+        console.error("Error fetching cart data:", error.message);
+      }
+    };
+
+    fetchCartStatus();
+  }, [productData.id]);
 
   return (
     <div className="border-b-2 py-8">
@@ -179,7 +255,7 @@ function Flahsales() {
             <div
               key={product.id}
               onMouseEnter={() => handleCartHover(product.id)}
-              onMouseLeave={() => setHoveredProductId(null)}
+              onMouseLeave={handleCartHoverLeave}
             >
               <div className=" card-1 relative w-[270px]  rounded-md border-2">
                 <div className="card-head relative h-[270px] flex flex-col justify-center items-center border-b-2">
@@ -198,7 +274,13 @@ function Flahsales() {
                     onClick={() => handleAddToCart(product.id)}
                   >
                     <img src={Wishlistcarticon} alt="" />
-                    <p className="">Add To Cart</p>
+                    {cartlistProducts.includes(product.id) ? (
+                      <Link to="/cart">
+                        <p>Go to Cart</p>
+                      </Link>
+                    ) : (
+                      <p>Add to Cart</p>
+                    )}
                   </button>
                 </div>
                 <div className="card-body p-2">

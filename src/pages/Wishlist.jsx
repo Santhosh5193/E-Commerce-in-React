@@ -1,7 +1,22 @@
 import gamepad from "./../assets/FlashSales/images/gamepad.svg";
 import deleteicon from "../assets/icons/Deleteicon.svg";
 import Wishlistcarticon from "../assets/icons/Wishlisticon1.svg";
+// import { useContext, useEffect } from "react";
+// import ExclusiveContext from "../context/ExclusiveContext";
+
 function Wishlist() {
+  // const {
+  //   setProductView,
+  //   timeLeft,
+  //   productData,
+  //   cartlistProducts,
+  //   setCartlistProducts,
+  // } = useContext(ExclusiveContext);
+
+  // useEffect(() => {
+  //   console.log(productData);
+  // }, [productData]);
+
   return (
     <div className=" py-10 px-14 ">
       <div className="flex mb-10 justify-between PoppinsFont">
