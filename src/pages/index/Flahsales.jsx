@@ -3,35 +3,44 @@ import leftArrow from "../../assets/FlashSales/images/Arrowleft.svg";
 import Star from "../../assets/FlashSales/images/star.svg";
 import Wishlisticon from "../../assets/svg/Wishlisticon";
 import Viewicon from "../../assets/svg/Viewicon";
-import Wishlistcarticon from "../../assets/icons/Wishlisticon1.svg";
+import Carticon from "../../assets/icons/Wishlisticon1.svg";
 import { Link } from "react-router-dom";
 import { useEffect, useState, useRef, useContext } from "react";
 import {
-  collection,
   getDoc,
   setDoc,
-  addDoc,
-  getDocs,
   updateDoc,
   arrayUnion,
   doc,
+  getDocs,
+  collection,
 } from "firebase/firestore";
 import { db } from "../../../firebase";
 import ExclusiveContext from "../../context/ExclusiveContext";
 import { getAuth, onAuthStateChanged } from "@firebase/auth";
+import { set, ref } from "firebase/database";
 
 function Flahsales() {
   const {
     setProductView,
     timeLeft,
     productData,
-    cartlistProducts,
-    setCartlistProducts,
+    // cartlistProducts,
+    // setCartlistProducts,
   } = useContext(ExclusiveContext);
   const auth = getAuth();
   const [hoveredProductId, setHoveredProductId] = useState(null);
-  // const [cartlistProducts, setCartlistProducts] = useState([]);
-  const [chechCartList, setCheckCartList] = useState(false);
+  const [checkCartList, setCheckCartList] = useState(false);
+  const [wishlistProducts, setWishlistProducts] = useState([]);
+  const [cartlistProducts, setCartlistProducts] = useState([]);
+  const [isProductInCart, setIsProductInCart] = useState(false);
+
+  // useEffect(() => {
+  //   if (hoveredProductId !== null) {
+  //     const isInCart = cartlistProducts.includes(hoveredProductId);
+  //     setIsProductInCart(isInCart);
+  //   }
+  // }, [hoveredProductId, cartlistProducts]);
 
   const handleCartHover = (id) => {
     const isproductInCartlist = cartlistProducts.some(
@@ -61,55 +70,70 @@ function Flahsales() {
       cardsRef.current.scrollBy({ left: 300, behavior: "smooth" });
     }
   };
-
-  const handleWishlist = (id) => {
+  const handleToViewlist = (id) => {
     setProductView(id);
   };
 
   // create a Cartlist
-  const createCartForUser = async (userId) => {
-    const wishlistRef = doc(db, "Cartlist", userId); // Reference to the user's wishlist
+  const createListsForUser = async (userId) => {
+    const cartReference = doc(db, "Cartlist", userId);
+    const wishlistReference = doc(db, "Wishtlist", userId);
 
     try {
-      const wishlistDoc = await getDoc(wishlistRef);
-
-      if (wishlistDoc.exists()) {
-        const wishlistData = wishlistDoc.data(); // Get the document data
-        const productList = wishlistData.products || []; // Get the 'products' array (default to empty array if not present)
-
-        // Extract the IDs of items in the 'products' array
-        const productIds = productList.map((item) => item.id); // Assuming each product has an 'id' field
-
-        // console.log("Product IDs:", productIds);
-        setCartlistProducts(productIds);
-        return productIds; // Return the array of product IDs
-      } else {
-        console.log("No wishlist found for this user.");
-        return [];
+      const cartlistDoc = await getDoc(cartReference);
+      let cartlistProductIds = [];
+      if (cartlistDoc.exists()) {
+        const cartlistData = cartlistDoc.data();
+        const cartlistProducts = cartlistData.products || [];
+        cartlistProductIds = cartlistProducts.map((item) => item.id);
       }
+      //  else {
+      //   console.log("No cartlist is founded for the user");
+      // }
+
+      const wishlistDoc = await getDoc(wishlistReference);
+      let wishlistProductIds = [];
+      if (wishlistDoc.exists()) {
+        const wishlistData = wishlistDoc.data();
+        const wishlistProducts = wishlistData.products || [];
+        wishlistProductIds = wishlistProducts.map((item) => item.id);
+      }
+      //  else {
+      //   console.log("No wishlist found for this user.");
+      // }
+
+      // console.log("Product IDs:", productIds);
+      setWishlistProducts(wishlistProductIds);
+      setCartlistProducts(cartlistProductIds);
+
+      return { cartlistProductIds, wishlistProductIds };
     } catch (error) {
       console.error("Error fetching wishlist:", error.message);
-      return [];
+      return { cartProductIds: [], wishlistProductIds: [] };
     }
   };
 
   useEffect(() => {
-    const checkAuthAndCreateCart = () => {
+    const checkAuthAndFetchLists = () => {
       onAuthStateChanged(auth, (user) => {
         if (user) {
-          createCartForUser(user.uid);
+          createListsForUser(user.uid);
         } else {
           console.log("User is not signed in");
         }
       });
     };
 
-    checkAuthAndCreateCart();
+    checkAuthAndFetchLists();
   }, [auth]);
 
   // Add Items to Cart
-  const handleAddToCart = async (productId) => {
+  const handleAddToList = async (productId, isWishlist = false) => {
     const userId = auth.currentUser?.uid;
+    // const cartRef = ref(db, `Cartlist/${productId}`);
+    // set(cartRef, true).then(() => {
+    //   console.log("Product added to cart");
+    // });
     if (!userId) {
       console.log("User not logged in");
       return;
@@ -121,30 +145,44 @@ function Flahsales() {
       return;
     }
 
-    const cartRef = doc(db, "Cartlist", userId);
+    const listRef = doc(db, isWishlist ? "Wishlist" : "Cartlist", userId);
     try {
-      const cartDoc = await getDoc(cartRef);
-      if (cartDoc.exists()) {
-        const existingProducts = cartDoc.data().products || [];
-        const isProductInCart = existingProducts.some(
+      const listDoc = await getDoc(listRef);
+
+      if (listDoc.exists()) {
+        const existingProducts = listDoc.data().products || [];
+        const isProductInList = existingProducts.some(
           (item) => item.productId === productId
         );
 
-        if (isProductInCart) {
+        if (isProductInList) {
           console.log("Product already in the cart");
         } else {
-          await updateDoc(cartRef, {
+          await updateDoc(listRef, {
             products: arrayUnion({ productId, ...product }),
           });
           console.log("Product added to existing cart");
-          setCartlistProducts((prev) => [...prev, productId]);
+          setCheckCartList(true);
+
+          if (isWishlist) {
+            setWishlistProducts((prev) => [...prev, productId]);
+          } else {
+            setCartlistProducts((prev) => [...prev, productId]);
+            setCheckCartList(true);
+          }
         }
       } else {
-        await setDoc(cartRef, {
+        await setDoc(listRef, {
           products: [{ productId, ...product }],
         });
         console.log("New cart created and product added");
-        setCartlistProducts((prev) => [...prev, productId]);
+
+        if (isWishlist) {
+          setWishlistProducts((prev) => [...prev, productId]);
+        } else {
+          setCartlistProducts((prev) => [...prev, productId]);
+          setCheckCartList(true);
+        }
       }
     } catch (error) {
       console.error("Error adding to cart:", error.message);
@@ -155,23 +193,53 @@ function Flahsales() {
       const userId = auth.currentUser?.uid;
       if (!userId) return;
 
-      const cartRef = doc(db, "Cartlist", userId);
       try {
+        // Fetch Cartlist
+        const cartRef = doc(db, "Cartlist", userId);
         const cartDoc = await getDoc(cartRef);
         if (cartDoc.exists()) {
-          const existingProducts = cartDoc.data().products || [];
-          const isProductInCart = existingProducts.some(
-            (item) => item.productId === productData.id
-          );
-          setCheckCartList(isProductInCart);
+          const existingCartProducts = cartDoc.data().products || [];
+          setCartlistProducts(existingCartProducts);
+        } else {
+          console.log("No Cartlist found for this user.");
+        }
+
+        // Fetch Wishlist
+        const wishlistRef = doc(db, "Wishlist", userId);
+        const wishlistDoc = await getDoc(wishlistRef);
+        if (wishlistDoc.exists()) {
+          const existingWishlistProducts = wishlistDoc.data().products || [];
+          setWishlistProducts(existingWishlistProducts);
+        } else {
+          console.log("No Wishlist found for this user.");
         }
       } catch (error) {
-        console.error("Error fetching cart data:", error.message);
+        console.error("Error fetching lists data:", error.message);
       }
     };
 
     fetchCartStatus();
-  }, [productData.id]);
+  }, [auth.currentUser?.uid, productData]);
+
+  // Fetch cartlist data from firebase
+  useEffect(() => {
+    const fetchCartData = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, "Cartlist"));
+        const Cartlistproducts = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        // console.log(Cartlistproducts);
+
+        setCartlistProducts(Cartlistproducts);
+      } catch (error) {
+        console.error("Error fetching product data:", error);
+      }
+    };
+
+    fetchCartData();
+  }, []);
 
   return (
     <div className="border-b-2 py-8">
@@ -245,12 +313,12 @@ function Flahsales() {
       </div>
 
       <div
-        className="cards pb-5 flex overflow-x-auto space-x-5"
+        className="cards pb-5 flex overflow-x-auto space-x-5 "
         ref={cardsRef}
         style={{ scrollbarWidth: "none" }}
       >
         {productData
-          .filter((product) => product.type === "flashsales")
+          ?.filter((product) => product.type === "flashsales")
           .map((product) => (
             <div
               key={product.id}
@@ -271,15 +339,16 @@ function Flahsales() {
                         ? "visible opacity-100"
                         : "invisible opacity-0"
                     } `}
-                    onClick={() => handleAddToCart(product.id)}
                   >
-                    <img src={Wishlistcarticon} alt="" />
-                    {cartlistProducts.includes(product.id) ? (
+                    <img src={Carticon} alt="" />
+                    {hoveredProductId === product.id && ? (
+                      <p onClick={() => handleAddToList(product.id, false)}>
+                        Add to Cart
+                      </p>
+                    ) : (
                       <Link to="/cart">
                         <p>Go to Cart</p>
                       </Link>
-                    ) : (
-                      <p>Add to Cart</p>
                     )}
                   </button>
                 </div>
@@ -292,15 +361,36 @@ function Flahsales() {
                       <h2 className="text-red-500">₹{product.price}</h2>
                       <h2 className="line-through">₹{product.originalPrice}</h2>
                       <div className="absolute  bg-white top-3 right-3 rounded-full">
-                        <div className="w-9 h-9 flex justify-center items-center ">
-                          <Wishlisticon />
+                        <div
+                          className="w-9 h-9 flex justify-center items-center cursor-pointer text-red-500 "
+                          onClick={() => handleAddToList(product.id, true)}
+                        >
+                          {/* <img
+                            src={wishlisthearticon}
+                            alt="wishlisthearticon"
+                            className=""
+                          /> */}
+                          {wishlistProducts.includes(product.id) ? (
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewBox="0 0 24 24"
+                              className="wishlist-icon w-6 h-6"
+                            >
+                              <path
+                                d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+                                fill="currentColor"
+                              />
+                            </svg>
+                          ) : (
+                            <p>i</p>
+                          )}
                         </div>
                       </div>
                       <div className="absolute  bg-white top-14 right-3 rounded-full">
                         <div
                           className="w-9 h-9 flex justify-center items-center cursor-pointer"
                           id={product.id}
-                          onClick={() => handleWishlist(product.id)}
+                          onClick={() => handleToViewlist(product.id)}
                         >
                           <Link to="/productview">
                             <Viewicon />
