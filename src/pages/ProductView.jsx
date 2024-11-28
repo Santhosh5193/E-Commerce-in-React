@@ -14,7 +14,7 @@ import { useContext } from "react";
 import ExclusiveContext from "../context/ExclusiveContext";
 
 function ProductView() {
-  const { productView, setProductView } = useContext(ExclusiveContext);
+  const { productView, setProductView  } = useContext(ExclusiveContext);
   const a = ["XS", "S", "M", "L", "XL"];
   const [productData, setProductData] = useState([]);
   const [hoveredImage, setHoveredImage] = useState("");
@@ -38,15 +38,15 @@ function ProductView() {
   }, []);
 
   const handleCartHover = (image) => {
-    setHoveredImage(image); // Set hovered image
+    setHoveredImage(image);
   };
 
   const handleCartNotHover = () => {
-    setHoveredImage(""); // Reset to the default image
+    setHoveredImage("");
   };
 
   const handleCartClick = (image) => {
-    setClickImage(image); // Set hovered image
+    setClickImage(image);
   };
 
   return (

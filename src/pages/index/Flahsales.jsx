@@ -3,7 +3,8 @@ import leftArrow from "../../assets/FlashSales/images/Arrowleft.svg";
 import Star from "../../assets/FlashSales/images/star.svg";
 import Wishlisticon from "../../assets/svg/Wishlisticon";
 import Viewicon from "../../assets/svg/Viewicon";
-import Carticon from "../../assets/icons/Wishlisticon1.svg";
+import Carticon from "../../assets/icons/Cartlisticon1.svg";
+import wishlisticon1 from "../../assets/icons/Wishlist.svg";
 import { Link } from "react-router-dom";
 import { useEffect, useState, useRef, useContext } from "react";
 import {
@@ -18,41 +19,52 @@ import {
 import { db } from "../../../firebase";
 import ExclusiveContext from "../../context/ExclusiveContext";
 import { getAuth, onAuthStateChanged } from "@firebase/auth";
-import { set, ref } from "firebase/database";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Swal from "sweetalert2";
 
 function Flahsales() {
   const {
     setProductView,
     timeLeft,
     productData,
-    // cartlistProducts,
-    // setCartlistProducts,
+    userId,
+    cartlistProducts,
+    setCartlistProducts,
+    wishlistProducts,
+    setWishlistProducts,
+    checkCartList,
+    setCheckCartList,
+    wishlistProductIds,
+    setWishlistProductsIds,
+    setWishlistChagne,
   } = useContext(ExclusiveContext);
   const auth = getAuth();
   const [hoveredProductId, setHoveredProductId] = useState(null);
-  const [checkCartList, setCheckCartList] = useState(false);
-  const [wishlistProducts, setWishlistProducts] = useState([]);
-  const [cartlistProducts, setCartlistProducts] = useState([]);
-  const [isProductInCart, setIsProductInCart] = useState(false);
+  const [checkWishList, setCheckWishList] = useState(false);
 
-  // useEffect(() => {
-  //   if (hoveredProductId !== null) {
-  //     const isInCart = cartlistProducts.includes(hoveredProductId);
-  //     setIsProductInCart(isInCart);
-  //   }
-  // }, [hoveredProductId, cartlistProducts]);
+  useEffect(() => {
+    if (!userId) {
+      setCartlistProducts([]);
+    }
+  }, [userId]);
 
+  // Handle cart products Hover
   const handleCartHover = (id) => {
-    const isproductInCartlist = cartlistProducts.some(
-      (cartlistProducts) => cartlistProducts === id
-    );
     setHoveredProductId(id);
+  };
+
+  useEffect(() => {
+    const isproductInCartlist = cartlistProducts.some(
+      (cartlistProducts) => cartlistProducts.id === hoveredProductId
+    );
+
     if (isproductInCartlist) {
       setCheckCartList(true);
     } else {
       setCheckCartList(false);
     }
-  };
+  }, [hoveredProductId]);
 
   const handleCartHoverLeave = () => {
     setHoveredProductId(null);
@@ -70,72 +82,34 @@ function Flahsales() {
       cardsRef.current.scrollBy({ left: 300, behavior: "smooth" });
     }
   };
+
+  //Product item to view
   const handleToViewlist = (id) => {
     setProductView(id);
   };
 
-  // create a Cartlist
-  const createListsForUser = async (userId) => {
-    const cartReference = doc(db, "Cartlist", userId);
-    const wishlistReference = doc(db, "Wishtlist", userId);
-
-    try {
-      const cartlistDoc = await getDoc(cartReference);
-      let cartlistProductIds = [];
-      if (cartlistDoc.exists()) {
-        const cartlistData = cartlistDoc.data();
-        const cartlistProducts = cartlistData.products || [];
-        cartlistProductIds = cartlistProducts.map((item) => item.id);
-      }
-      //  else {
-      //   console.log("No cartlist is founded for the user");
-      // }
-
-      const wishlistDoc = await getDoc(wishlistReference);
-      let wishlistProductIds = [];
-      if (wishlistDoc.exists()) {
-        const wishlistData = wishlistDoc.data();
-        const wishlistProducts = wishlistData.products || [];
-        wishlistProductIds = wishlistProducts.map((item) => item.id);
-      }
-      //  else {
-      //   console.log("No wishlist found for this user.");
-      // }
-
-      // console.log("Product IDs:", productIds);
-      setWishlistProducts(wishlistProductIds);
-      setCartlistProducts(cartlistProductIds);
-
-      return { cartlistProductIds, wishlistProductIds };
-    } catch (error) {
-      console.error("Error fetching wishlist:", error.message);
-      return { cartProductIds: [], wishlistProductIds: [] };
-    }
-  };
-
-  useEffect(() => {
-    const checkAuthAndFetchLists = () => {
-      onAuthStateChanged(auth, (user) => {
-        if (user) {
-          createListsForUser(user.uid);
-        } else {
-          console.log("User is not signed in");
-        }
-      });
-    };
-
-    checkAuthAndFetchLists();
-  }, [auth]);
-
-  // Add Items to Cart
+  // Add or Remove Items from Wishlist or Cart
   const handleAddToList = async (productId, isWishlist = false) => {
     const userId = auth.currentUser?.uid;
-    // const cartRef = ref(db, `Cartlist/${productId}`);
-    // set(cartRef, true).then(() => {
-    //   console.log("Product added to cart");
-    // });
     if (!userId) {
       console.log("User not logged in");
+      Swal.fire({
+        title: "User not logged in",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Login",
+        customClass: {
+          confirmButton: "custom-login-button",
+          cancelButton: "custom-login-button",
+        },
+      }).then((result) => {
+        if (result.isConfirmed) {
+          window.location.href = "/login";
+        }
+      });
       return;
     }
 
@@ -145,7 +119,9 @@ function Flahsales() {
       return;
     }
 
-    const listRef = doc(db, isWishlist ? "Wishlist" : "Cartlist", userId);
+    const collectionName = isWishlist ? "Wishlist" : "Cartlist";
+    const listRef = doc(db, collectionName, userId);
+
     try {
       const listDoc = await getDoc(listRef);
 
@@ -156,16 +132,38 @@ function Flahsales() {
         );
 
         if (isProductInList) {
-          console.log("Product already in the cart");
+          // Remove the product if it's already in the list
+          const updatedProducts = existingProducts.filter(
+            (item) => item.productId !== productId
+          );
+
+          // Update the corresponding state
+          if (isWishlist) {
+            await updateDoc(listRef, { products: updatedProducts });
+            // console.log(`Product removed from ${collectionName.toLowerCase()}`);
+            toast.success(
+              `Product removed from ${collectionName.toLowerCase()}`
+            );
+            setWishlistProducts((prev) =>
+              prev.filter((id) => id !== productId)
+            );
+            setWishlistProductsIds((prev) =>
+              prev.filter((id) => id !== productId)
+            );
+          }
         } else {
           await updateDoc(listRef, {
             products: arrayUnion({ productId, ...product }),
           });
-          console.log("Product added to existing cart");
-          setCheckCartList(true);
+          // console.log(`Product added to ${collectionName.toLowerCase()}`);
+          toast.success(`Product added to ${collectionName.toLowerCase()}`);
 
           if (isWishlist) {
             setWishlistProducts((prev) => [...prev, productId]);
+            // setWishlistProductsIds((prev) => [...prev, productId]);
+            setWishlistProductsIds((prev) =>
+              prev.filter((id) => id !== productId)
+            );
           } else {
             setCartlistProducts((prev) => [...prev, productId]);
             setCheckCartList(true);
@@ -175,8 +173,11 @@ function Flahsales() {
         await setDoc(listRef, {
           products: [{ productId, ...product }],
         });
-        console.log("New cart created and product added");
+        toast.success(
+          `New ${collectionName.toLowerCase()} created and product added`
+        );
 
+        // Update the corresponding state
         if (isWishlist) {
           setWishlistProducts((prev) => [...prev, productId]);
         } else {
@@ -185,61 +186,12 @@ function Flahsales() {
         }
       }
     } catch (error) {
-      console.error("Error adding to cart:", error.message);
+      console.error(
+        `Error updating ${collectionName.toLowerCase()}:`,
+        error.message
+      );
     }
   };
-  useEffect(() => {
-    const fetchCartStatus = async () => {
-      const userId = auth.currentUser?.uid;
-      if (!userId) return;
-
-      try {
-        // Fetch Cartlist
-        const cartRef = doc(db, "Cartlist", userId);
-        const cartDoc = await getDoc(cartRef);
-        if (cartDoc.exists()) {
-          const existingCartProducts = cartDoc.data().products || [];
-          setCartlistProducts(existingCartProducts);
-        } else {
-          console.log("No Cartlist found for this user.");
-        }
-
-        // Fetch Wishlist
-        const wishlistRef = doc(db, "Wishlist", userId);
-        const wishlistDoc = await getDoc(wishlistRef);
-        if (wishlistDoc.exists()) {
-          const existingWishlistProducts = wishlistDoc.data().products || [];
-          setWishlistProducts(existingWishlistProducts);
-        } else {
-          console.log("No Wishlist found for this user.");
-        }
-      } catch (error) {
-        console.error("Error fetching lists data:", error.message);
-      }
-    };
-
-    fetchCartStatus();
-  }, [auth.currentUser?.uid, productData]);
-
-  // Fetch cartlist data from firebase
-  useEffect(() => {
-    const fetchCartData = async () => {
-      try {
-        const querySnapshot = await getDocs(collection(db, "Cartlist"));
-        const Cartlistproducts = querySnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        // console.log(Cartlistproducts);
-
-        setCartlistProducts(Cartlistproducts);
-      } catch (error) {
-        console.error("Error fetching product data:", error);
-      }
-    };
-
-    fetchCartData();
-  }, []);
 
   return (
     <div className="border-b-2 py-8">
@@ -311,7 +263,6 @@ function Flahsales() {
           </div>
         </div>
       </div>
-
       <div
         className="cards pb-5 flex overflow-x-auto space-x-5 "
         ref={cardsRef}
@@ -341,14 +292,14 @@ function Flahsales() {
                     } `}
                   >
                     <img src={Carticon} alt="" />
-                    {hoveredProductId === product.id && ? (
-                      <p onClick={() => handleAddToList(product.id, false)}>
-                        Add to Cart
-                      </p>
-                    ) : (
+                    {checkCartList ? (
                       <Link to="/cart">
                         <p>Go to Cart</p>
                       </Link>
+                    ) : (
+                      <p onClick={() => handleAddToList(product.id, false)}>
+                        Add to Cart
+                      </p>
                     )}
                   </button>
                 </div>
@@ -361,20 +312,13 @@ function Flahsales() {
                       <h2 className="text-red-500">₹{product.price}</h2>
                       <h2 className="line-through">₹{product.originalPrice}</h2>
                       <div className="absolute  bg-white top-3 right-3 rounded-full">
-                        <div
-                          className="w-9 h-9 flex justify-center items-center cursor-pointer text-red-500 "
-                          onClick={() => handleAddToList(product.id, true)}
-                        >
-                          {/* <img
-                            src={wishlisthearticon}
-                            alt="wishlisthearticon"
-                            className=""
-                          /> */}
-                          {wishlistProducts.includes(product.id) ? (
+                        <div className="w-9 h-9 flex justify-center items-center cursor-pointer text-red-500 ">
+                          {wishlistProductIds.includes(product.id) ? (
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
                               viewBox="0 0 24 24"
                               className="wishlist-icon w-6 h-6"
+                              onClick={() => handleAddToList(product.id, true)}
                             >
                               <path
                                 d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
@@ -382,7 +326,11 @@ function Flahsales() {
                               />
                             </svg>
                           ) : (
-                            <p>i</p>
+                            <img
+                              src={wishlisticon1}
+                              alt=""
+                              onClick={() => handleAddToList(product.id, true)}
+                            />
                           )}
                         </div>
                       </div>
@@ -423,6 +371,7 @@ function Flahsales() {
           </button>
         </Link>
       </div>
+      <ToastContainer autoClose={2000} />;
     </div>
   );
 }

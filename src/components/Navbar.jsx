@@ -15,11 +15,16 @@ import ExclusiveContext from "../context/ExclusiveContext";
 import { getAuth, signOut } from "firebase/auth";
 import OustsideClick from "./OustsideClick";
 import Swal from "sweetalert2";
+import hearticon from "../assets/icons/Hearticon.svg";
+import heartwishlisticon from "../assets/icons/wishlisthearticon.svg";
 
 function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-  const { userId } = useContext(ExclusiveContext);
+  const { userId, setUserId, wishlistProductIds, cartlistProducts } =
+    useContext(ExclusiveContext);
+  const [isWishlistlength, setIsWishlistlength] = useState(0);
+  const [isCartlistlength, setIsCartlistlength] = useState(0);
   const wrapperRef = useRef(null);
   const auth = getAuth();
 
@@ -39,6 +44,7 @@ function Navbar() {
   // Logout
   const handleLogout = () => {
     if (userId) {
+      setUserId(null);
       signOut(auth)
         .then(() => {
           Swal.fire({
@@ -53,18 +59,27 @@ function Navbar() {
         });
     }
   };
+  useEffect(() => {
+    const wishlistitems = wishlistProductIds.length;
+    setIsWishlistlength(wishlistitems);
+  }, [wishlistProductIds]);
+
+  useEffect(() => {
+    const cartlistitems = cartlistProducts.length;
+    setIsCartlistlength(cartlistitems);
+  }, [cartlistProducts]);
 
   return (
-    <nav className="border-b-2 md:px-10 pt-5 pb-2 ssm:px-10">
-      <div className="flex flex-col ssm:flex-row md:justify-between md:items-center justify-between items-center gap-5">
-        <div className="flex md:flex-col lg:flex-row justify-around ssm:w-10 md:w-1/2">
+    <nav className="border-b-2 sm:px-10 pt-5 pb-2 px-5">
+      <div className="flex justify-evenly lg:justify-between md:justify-evenly md:items-center sm:justify-between items-center gap-5">
+        <div className="flex justify-around ssm:w-10 md:w-1/2 md:gap-3">
           <div className="">
-            <h3 className="InterFont font-bold md:text-2xl text-xl">
+            <h3 className="InterFont font-bold md:text-2xl sm:text-xl text-base">
               Exclusive
             </h3>
           </div>
           <div className="hidden md:flex items-center">
-            <ul className="flex PoppinsFont text-base xlg:gap-12 md:space-x-3 ">
+            <ul className="flex PoppinsFont text-base xlg:gap-12 md:space-x-3 lg:space-x-10 md:text-sm mmd:text-base lg:text-lg">
               <li>
                 <Link to="/">Home</Link>
               </li>
@@ -81,33 +96,59 @@ function Navbar() {
           </div>
         </div>
 
-        <div className="flex w-1/2 justify-center items-center md:gap-3 lg:gap-5 gap-5">
-          <form className="lg:w-90 md:w-90    bg-light-greyy border-none rounded-2 px-3 py-2">
-            <div className="flex items-center gap-8 md:flex lg:flex">
-              <label htmlFor="search">
-                <img src={Vector} alt="search icon" />
-              </label>
-              <input
-                type="text"
-                placeholder="Search.."
-                id="search"
-                name="search"
-                className="outline-none bg-inherit md:w-3/4 "
+        <div className="flex justify-center items-center md:gap-3 lg:gap-5 gap-5">
+          <form className="w-full sm:w-[243px] sm:h-[38px] h-[35px] bg-light-greyy border-none rounded-2 flex items-center justify-center md:px-3 px-2 py-2">
+            <label
+              htmlFor="search"
+              className="flex justify-center items-center"
+            >
+              <img
+                src={Vector}
+                alt="search icon"
+                className="md:w-5 md:h-5 w-4 h-4 mr-2"
               />
-            </div>
+            </label>
+            <input
+              type="text"
+              placeholder="Search.."
+              id="search"
+              name="search"
+              className="hidden sm:block outline-none bg-inherit md:pl-8 w-full h-full"
+            />
+            <input
+              type="text"
+              id="search"
+              name="search"
+              className="block sm:hidden outline-none bg-inherit w-full h-full"
+            />
           </form>
-          <div className="hidden md:flex items-center md:gap-2 lg:gap-5">
-            <div className="Wishlist">
-              <Link to="/wishlist">
-                <Wishlisticon />
-              </Link>
+          <div className="hidden md:flex items-center md:gap-2 lg:gap-5 gap-2">
+            <div className="Wishlist relative flex items-center">
+              <div className="">
+                <Link to="/wishlist">
+                  <Wishlisticon className="w-10 h-10" />
+                </Link>
+              </div>
+              {isWishlistlength !== 0 && (
+                <span className="absolute bg-red-400 top-[-5px] left-[-5px] rounded-full w-5 h-5 flex items-center justify-center md:text-xs text-white font-semibold">
+                  {isWishlistlength}
+                </span>
+              )}
             </div>
-            <div className="Cart">
+            <div className="Cart relative">
               <Link to="/cart">
                 <Carticon />
               </Link>
+              {isCartlistlength !== 0 && (
+                <span className="absolute bg-red-400 top-[-5px] left-[-5px] rounded-full w-5 h-5 flex items-center justify-center text-xs text-white font-semibold">
+                  {isCartlistlength}
+                </span>
+              )}
             </div>
-            <div className="relative inline-block text-left" ref={wrapperRef}>
+            <div
+              className="relative md:inline-block text-left"
+              ref={wrapperRef}
+            >
               <div
                 className={`w-10 h-10 flex items-center justify-center rounded-full ${
                   isUserMenuOpen ? "bg-red-500" : "bg-none"
@@ -191,7 +232,7 @@ function Navbar() {
 
           <div className="md:hidden">
             <button className="menu-button" onClick={toggleMenu}>
-              <GiHamburgerMenu className="w-6 h-6" />
+              <GiHamburgerMenu className="w-5 h-5" />
             </button>
           </div>
         </div>
@@ -219,14 +260,30 @@ function Navbar() {
             </li>
           )}
           <li className="p-2">
-            <Link to="/wishlist">
-              <Wishlisticon />
-            </Link>
+            <div className="Wishlist relative flex items-center">
+              <div className="">
+                <Link to="/wishlist">
+                  <Wishlisticon className="w-10 h-10" />
+                </Link>
+              </div>
+              {isWishlistlength !== 0 && (
+                <span className="absolute bg-red-400 top-[-5px] left-[-5px] rounded-full w-5 h-5 flex items-center justify-center md:text-xs text-white font-semibold">
+                  {isWishlistlength}
+                </span>
+              )}
+            </div>
           </li>
           <li className="p-2">
-            <Link to="/cart">
-              <img src={Cart1} alt="Cart" />
-            </Link>
+            <div className="Cart relative">
+              <Link to="/cart">
+                <Carticon />
+              </Link>
+              {isCartlistlength !== 0 && (
+                <span className="absolute bg-red-400 top-[-5px] left-[-5px] rounded-full w-5 h-5 flex items-center justify-center text-xs text-white font-semibold">
+                  {isCartlistlength}
+                </span>
+              )}
+            </div>
           </li>
         </ul>
       </div>

@@ -1,42 +1,39 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useEffect, useRef, useState } from "react";
 import { getAuth, onAuthStateChanged } from "@firebase/auth";
+import { db } from "../../firebase";
 import {
-  collection,
   getDoc,
   setDoc,
-  addDoc,
-  getDocs,
   updateDoc,
   arrayUnion,
   doc,
+  getDocs,
+  collection,
 } from "firebase/firestore";
-import { db } from "../../firebase";
 
 const ExclusiveContext = createContext();
 
 export const ContextProvider = ({ children }) => {
   const [productView, setProductView] = useState("");
   const [productData, setProductData] = useState([]);
-  // const [cartlistProducts, setCartlistProducts] = useState([]);
   const [wishlistProducts, setWishlistProducts] = useState([]);
   const [setIncrement, isSetIncrement] = useState(1);
-  const [userId, setUserId] = useState("");
+  const [userId, setUserId] = useState(null);
   const auth = getAuth();
-  const [timeLeft, setTimeLeft] = useState({
-    days: 3,
-    hours: 0,
-    minutes: 0,
-    seconds: 0,
-  });
+  const [timeLeft, setTimeLeft] = useState({});
+  const [cartlistProducts, setCartlistProducts] = useState([]);
+  const [checkCartList, setCheckCartList] = useState(false);
+  const [wishlistProductIds, setWishlistProductsIds] = useState([]);
+  const [subTotalPrice, setSubTotalPrice] = useState(0);
+  const [checkWishList, setCheckWishList] = useState(false);
+  const [wishlistChange, setWishlistChagne] = useState(false);
 
   // Fetch and set the user ID when auth state changes
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        // console.log("User ID (UID):", user.uid);
         setUserId(user.uid);
       } else {
-        // console.log("No user is signed in.");
         setUserId("");
       }
     });
@@ -45,26 +42,29 @@ export const ContextProvider = ({ children }) => {
   }, [auth]);
 
   // Count down
-  // useEffect(() => {
-  //   const endTime = new Date().getTime() + 3 * 24 * 60 * 60 * 1000;
+  useEffect(() => {
+    const endTime = new Date().getTime() + 3 * 24 * 60 * 60 * 1000;
 
-  //   const calculateTimeLeft = () => {
-  //     const currentTime = new Date().getTime();
-  //     const difference = endTime - currentTime;
+    const calculateTimeLeft = () => {
+      const currentTime = new Date().getTime();
+      const difference = endTime - currentTime;
 
-  //     if (difference > 0) {
-  //       setTimeLeft({
-  //         days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-  //         hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
-  //         minutes: Math.floor((difference / (1000 * 60)) % 60),
-  //         seconds: Math.floor((difference / 1000) % 60),
-  //       });
-  //     }
-  //   };
+      setTimeLeft((prevTime) => {
+        const newTime = {
+          days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+          hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+          minutes: Math.floor((difference / (1000 * 60)) % 60),
+          seconds: Math.floor((difference / 1000) % 60),
+        };
+        return JSON.stringify(prevTime) === JSON.stringify(newTime)
+          ? prevTime
+          : newTime;
+      });
+    };
 
-  //   const interval = setInterval(calculateTimeLeft, 1000);
-  //   return () => clearInterval(interval);
-  // }, []);
+    const interval = setInterval(calculateTimeLeft, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   //Fetch data from firebase
   useEffect(() => {
@@ -85,44 +85,70 @@ export const ContextProvider = ({ children }) => {
     fetchProductData();
   }, []);
 
-  // // Fetch cartlist data from firebase
-  // useEffect(() => {
-  //   const fetchCartData = async () => {
-  //     try {
-  //       const querySnapshot = await getDocs(collection(db, "Cartlist"));
-  //       const Cartlistproducts = querySnapshot.docs.map((doc) => ({
-  //         id: doc.id,
-  //         ...doc.data(),
-  //       }));
-  //       // console.log(Cartlistproducts);
-
-  //       setCartlistProducts(Cartlistproducts);
-  //     } catch (error) {
-  //       console.error("Error fetching product data:", error);
-  //     }
-  //   };
-
-  //   fetchCartData();
-  // }, []);
-
-  //Fetch wishlist data from firebase
+  // Fetch data from cartlist and wishlist
   useEffect(() => {
-    const fetchWishlistData = async () => {
+    const fetchCartStatus = async () => {
+      const userId = auth.currentUser?.uid;
+      if (!userId) return;
+
       try {
-        const querySnapshot = await getDocs(collection(db, "Wishlist"));
-        const Wishlistproducts = querySnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        // console.log(Cartlistproducts);
-        setWishlistProducts(Wishlistproducts);
+        // Fetch Cartlist
+        const cartRef = doc(db, "Cartlist", userId);
+        const cartDoc = await getDoc(cartRef);
+        if (cartDoc.exists()) {
+          const existingCartProducts = cartDoc.data().products || [];
+          setCartlistProducts((prev) => {
+            if (JSON.stringify(prev) !== JSON.stringify(existingCartProducts)) {
+              return existingCartProducts;
+            }
+            return prev;
+          });
+        } else {
+          console.log("No Cartlist found for this user.");
+        }
+
+        // Fetch Wishlist
+        const wishlistRef = doc(db, "Wishlist", userId);
+        const wishlistDoc = await getDoc(wishlistRef);
+        if (wishlistDoc.exists()) {
+          const existingWishlistProducts = wishlistDoc.data().products || [];
+          setWishlistProducts(existingWishlistProducts);
+        } else {
+          console.log("No Wishlist found for this user.");
+        }
       } catch (error) {
-        console.error("Error fetching product data:", error);
+        console.error("Error fetching lists data:", error.message);
       }
     };
 
-    fetchWishlistData();
-  }, []);
+    fetchCartStatus();
+  }, [auth.currentUser?.uid, productData, checkCartList, wishlistProductIds]);
+
+  useEffect(() => {
+    const productIds = wishlistProducts.map((i) => i.id);
+    setWishlistProductsIds(productIds);
+  }, [wishlistProducts]);
+
+  // Calculating SubTotal and Final Total
+  useEffect(() => {
+    const subTotalPrice = cartlistProducts.reduce(
+      (acc, item) => acc + item.price * item.quantity,
+      0
+    );
+    setSubTotalPrice(subTotalPrice.toFixed(2));
+  }, [cartlistProducts]);
+
+  // const prevWishlistProductIds = useRef();
+
+  // Rendering wishlist product
+  // useEffect(() => {
+  //   if (prevWishlistProductIds.current !== wishlistProductIds.length) {
+  //     prevWishlistProductIds.current = wishlistProductIds.length;
+  //   }
+  // }, [wishlistProductIds]);
+
+  const shippingCost = cartlistProducts.length * 20;
+  const totalPrice = Number(subTotalPrice) + Number(shippingCost);
 
   return (
     <ExclusiveContext.Provider
@@ -134,10 +160,20 @@ export const ContextProvider = ({ children }) => {
         timeLeft,
         setProductView,
         productData,
-        // cartlistProducts,
-        // setCartlistProducts,
         setIncrement,
         isSetIncrement,
+        cartlistProducts,
+        setCartlistProducts,
+        wishlistProducts,
+        setWishlistProducts,
+        checkCartList,
+        setCheckCartList,
+        wishlistProductIds,
+        setWishlistProductsIds,
+        subTotalPrice,
+        shippingCost,
+        totalPrice,
+        setWishlistChagne,
       }}
     >
       {children}

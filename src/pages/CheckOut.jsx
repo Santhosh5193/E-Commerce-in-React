@@ -2,16 +2,19 @@ import Gamemouse from "../assets/SellingProducts/images/Gamemouse.png";
 import { useContext } from "react";
 import ExclusiveContext from "../context/ExclusiveContext";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 function CheckOut() {
-  const { productView, setProductView } = useContext(ExclusiveContext);
+  const { cartlistProducts, subTotalPrice, shippingCost, totalPrice } =
+    useContext(ExclusiveContext);
 
   return (
-    <section className="py-10 px-16">
+    <section className="py-10 md:px-16 px-10">
       <div className="">
         <header>
           <h2 className="PoppinsFont mb-10">
-            Home / cart / <span className="font-medium">Checkout</span>
+            <Link to="/"> Home</Link> / <Link to="/cart"> cart </Link> /
+            <span className="font-medium">Checkout</span>
           </h2>
         </header>
         <main className="md:flex space-y-16">
@@ -121,33 +124,38 @@ function CheckOut() {
             </form>
           </div>
           <div className="md:w-1/2 w-full h-full PoppinsFont">
-            <div className="space-y-5">
-              <div className="flex justify-between ">
-                <div className="flex space-x-7">
-                  <img src={Gamemouse} alt="LCD Monitor" className="w-10" />
-                  <p className=" ">LCD Monitor </p>
+            {cartlistProducts.map((item) => (
+              <div className="mt-10" key={item.id}>
+                <div className="flex justify-between items-center ">
+                  <div className="flex items-center space-x-7 ">
+                    <img
+                      src={item.image[0]}
+                      alt="LCD Monitor"
+                      className="w-10"
+                    />
+                    <p className="inline-block truncate sm:w-[270px] md:w-[150px] ssm:w-[240px] w-[130px] lg:w-full">
+                      {item.productName}
+                    </p>
+                  </div>
+                  <div className="">
+                    <p className="">
+                      {(item.quantity * item.offerPrice).toFixed(2)}
+                    </p>
+                  </div>
                 </div>
-                <p className="">$650</p>
               </div>
-              <div className="flex justify-between ">
-                <div className="flex space-x-7">
-                  <img src={Gamemouse} alt="LCD Monitor" className="w-10" />
-                  <p className=" ">LCD Monitor </p>
-                </div>
-                <p className="">$650</p>
-              </div>
-            </div>
+            ))}
             <div className="flex justify-between mt-10 border-b-2 pb-3">
               <p className="">Subtotal: </p>
-              <p className="">$1300</p>
+              <p className="">{subTotalPrice}</p>
             </div>
             <div className="flex justify-between border-b-2 py-3">
               <p className="">Shipping: </p>
-              <p className="">Free</p>
+              <p className="">{shippingCost}</p>
             </div>
             <div className="flex justify-between py-4">
               <p className="">Total: </p>
-              <p className="">$1300</p>
+              <p className="">{totalPrice}</p>
             </div>
             <div className="flex space-x-5 mt-3">
               <input type="radio" id="radiobtn" className="w-4" />

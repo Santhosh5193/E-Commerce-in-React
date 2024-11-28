@@ -1,58 +1,234 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Star from "./../assets/FlashSales/images/star.svg";
-import { collection, getDocs } from "firebase/firestore";
+import {
+  arrayUnion,
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  setDoc,
+  updateDoc,
+} from "firebase/firestore";
 import { db } from "../../firebase";
 import Wishlisticon from "../assets/svg/Wishlisticon";
+import Carticon from "../assets/icons/Cartlisticon1.svg";
+import deleteicon from "../assets/icons/Deleteicon.svg";
 import Viewicon from "../assets/svg/Viewicon";
 import { Link } from "react-router-dom";
+import ExclusiveContext from "../context/ExclusiveContext";
+import wishlisticon1 from "../assets/icons/Wishlist.svg";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function Products() {
-  const [productData, setProductData] = useState([]);
+  const {
+    wishlistProducts,
+    setWishlistProducts,
+    productData,
+    userId,
+    setProductView,
+    cartlistProducts,
+    setCartlistProducts,
+    checkCartList,
+    setCheckCartList,
+    wishlistProductIds,
+    setWishlistProductsIds,
+  } = useContext(ExclusiveContext);
+  const [hoveredProductId, setHoveredProductId] = useState(null);
+  const [addWishlist, setAddwishlist] = useState(false);
 
-  //Fetch data from firebase
-  useEffect(() => {
-    const fetchProductData = async () => {
-      try {
-        const querySnapshot = await getDocs(collection(db, "Products"));
-        const products = querySnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setProductData(products);
-      } catch (error) {
-        console.error("Error fetching product data:", error);
+  //Product item to view
+  const handleToViewlist = (id) => {
+    setProductView(id);
+  };
+
+  // Add or Remove Items from Wishlist or Cart
+  const handleAddToList = async (productId, isWishlist = false) => {
+    if (!userId) {
+      console.log("User not logged in");
+      return;
+    }
+
+    const product = productData.find((item) => item.id === productId);
+    if (!product) {
+      console.error("Product not found");
+      return;
+    }
+
+    const collectionName = isWishlist ? "Wishlist" : "Cartlist";
+    const listRef = doc(db, collectionName, userId);
+
+    try {
+      const listDoc = await getDoc(listRef);
+
+      if (listDoc.exists()) {
+        const existingProducts = listDoc.data().products || [];
+        const isProductInList = existingProducts.some(
+          (item) => item.productId === productId
+        );
+
+        if (isProductInList) {
+          // Remove the product if it's already in the list
+          const updatedProducts = existingProducts.filter(
+            (item) => item.productId !== productId
+          );
+
+          // Update the corresponding state
+          if (isWishlist) {
+            await updateDoc(listRef, { products: updatedProducts });
+            toast.success(
+              `Product removed from ${collectionName.toLowerCase()}`
+            );
+
+            setWishlistProducts((prev) =>
+              prev.filter((id) => id !== productId)
+            );
+            setWishlistProductsIds((prev) =>
+              prev.filter((id) => id !== productId)
+            );
+          }
+        } else {
+          await updateDoc(listRef, {
+            products: arrayUnion({ productId, ...product }),
+          });
+          toast.success(`Product added to ${collectionName.toLowerCase()}`);
+
+          if (isWishlist) {
+            setWishlistProducts((prev) => [...prev, productId]);
+            setWishlistProductsIds((prev) => [...prev, productId]);
+          } else {
+            setCartlistProducts((prev) => [...prev, productId]);
+            setCheckCartList(true);
+          }
+        }
+      } else {
+        await setDoc(listRef, {
+          products: [{ productId, ...product }],
+        });
+        toast.success(
+          `New ${collectionName.toLowerCase()} created and product added`
+        );
+
+        // Update the corresponding state
+        if (isWishlist) {
+          setWishlistProducts((prev) => [...prev, productId]);
+          setWishlistProductsIds((prev) => [...prev, productId]);
+
+        } else {
+          setCartlistProducts((prev) => [...prev, productId]);
+          setCheckCartList(true);
+        }
       }
-    };
+    } catch (error) {
+      console.error(
+        `Error updating ${collectionName.toLowerCase()}:`,
+        error.message
+      );
+    }
+  };
 
-    fetchProductData();
-  }, []);
+  // Handle cart products Hover
+  const handleCartHover = (id) => {
+    setHoveredProductId(id);
+  };
+
+  useEffect(() => {
+    const isproductInCartlist = cartlistProducts.some(
+      (cartlistProducts) => cartlistProducts.id === hoveredProductId
+    );
+
+    if (isproductInCartlist) {
+      setCheckCartList(true);
+    } else {
+      setCheckCartList(false);
+    }
+  }, [hoveredProductId]);
+
+  const handleCartHoverLeave = () => {
+    setHoveredProductId(null);
+  };
+  // useEffect(() => {
+  //   const productIds = wishlistProducts.map((i) => i.id);
+  //   setWishlistProductsIds(productIds);
+  //   const id = wishlistProducts.some(
+  //     (wishlistProducts) => wishlistProducts.id !== productData
+  //   );
+  //   // console.log(id);
+  // }, [wishlistProducts]);
 
   return (
-    <div className="p-5">
-      <div className="cards flex justify-center items-start flex-wrap gap-10">
+    <div className=" py-10 px-14 ">
+      <div className="cards pb-5 flex justify-center items-start flex-wrap gap-10 ">
         {productData.map((product) => (
-          <div key={product.id}>
-            <div className=" card-1 relative w-[270px] h-[340px] rounded-md border-2">
-              <div className="card-head border-b-2  h-[250px] flex justify-center items-center ">
+          <div
+            key={product.id}
+            onMouseEnter={() => handleCartHover(product.id)}
+            onMouseLeave={handleCartHoverLeave}
+          >
+            <div className=" card-1 relative w-[270px]  rounded-md border-2">
+              <div className="card-head relative h-[270px] flex flex-col justify-center items-center border-b-2">
                 <img
                   src={product.image[0]}
                   alt=""
-                  className="w-[80%] h-[70%] object-contain"
+                  tabIndex="0"
+                  className="w-[80%] h-[70%] object-contain cursor-pointer"
                 />
+                <button
+                  className={`w-full absolute bottom-0 flex justify-center gap-3 py-2  bg-black text-white transition-all duration-300 ${
+                    hoveredProductId === product.id
+                      ? "visible opacity-100"
+                      : "invisible opacity-0"
+                  } `}
+                >
+                  <img src={Carticon} alt="" />
+                  {checkCartList ? (
+                    <Link to="/cart">
+                      <p>Go to Cart</p>
+                    </Link>
+                  ) : (
+                    <p onClick={() => handleAddToList(product.id, false)}>
+                      Add to Cart
+                    </p>
+                  )}
+                </button>
               </div>
               <div className="card-body p-2">
                 <div className="">
-                  <h2 className=""> {product.productName}</h2>
+                  <h2 className="font-medium inline-block w-[230px] truncate">
+                    {product.productName}
+                  </h2>
                   <div className="rate flex gap-3">
-                    <h2 className="text-red-500">${product.price}</h2>
-                    <h2 className="line-through">$160</h2>
+                    <h2 className="text-red-500">₹{product.price}</h2>
+                    <h2 className="line-through">₹{product.originalPrice}</h2>
                     <div className="absolute  bg-white top-3 right-3 rounded-full">
-                      <div className="w-9 h-9 flex justify-center items-center ">
-                        <Wishlisticon />
+                      <div className="w-9 h-9 flex justify-center items-center cursor-pointer text-red-500 ">
+                        {wishlistProductIds.includes(product.id) ? (
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            className="wishlist-icon w-6 h-6"
+                            onClick={() => handleAddToList(product.id, true)}
+                          >
+                            <path
+                              d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+                              fill="currentColor"
+                            />
+                          </svg>
+                        ) : (
+                          <img
+                            src={wishlisticon1}
+                            alt=""
+                            onClick={() => handleAddToList(product.id, true)}
+                          />
+                        )}
                       </div>
                     </div>
                     <div className="absolute  bg-white top-14 right-3 rounded-full">
-                      <div className="w-9 h-9 flex justify-center items-center ">
+                      <div
+                        className="w-9 h-9 flex justify-center items-center cursor-pointer"
+                        id={product.id}
+                        onClick={() => handleToViewlist(product.id)}
+                      >
                         <Link to="/productview">
                           <Viewicon />
                         </Link>
@@ -77,6 +253,7 @@ function Products() {
           </div>
         ))}
       </div>
+      <ToastContainer autoClose={2000} />;
     </div>
   );
 }
