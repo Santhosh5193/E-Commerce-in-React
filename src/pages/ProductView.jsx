@@ -1,11 +1,6 @@
-// import Productview1 from "../assets/images/Productview1.png";
-// import Productview2 from "../assets/images/Productview2.png";
-// import Productview3 from "../assets/images/Productview3.png";
-// import Productview4 from "../assets/images/Productview4.png";
-// import Productview5 from "../assets/images/Productview5.png";
 import Star from "../assets/FlashSales/images/star.svg";
 import Quantity from "../components/Quantity";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import Wishlisticon from "../assets/icons/Wishlist.svg";
 import { useEffect, useState } from "react";
 import { collection, getDocs } from "firebase/firestore";
@@ -14,27 +9,39 @@ import { useContext } from "react";
 import ExclusiveContext from "../context/ExclusiveContext";
 
 function ProductView() {
-  const { productView, setProductView  } = useContext(ExclusiveContext);
+  const { productView, setProductView } = useContext(ExclusiveContext);
   const a = ["XS", "S", "M", "L", "XL"];
   const [productData, setProductData] = useState([]);
   const [hoveredImage, setHoveredImage] = useState("");
   const [clickImage, setClickImage] = useState("");
 
   useEffect(() => {
-    const fetchProductData = async () => {
-      try {
-        const querySnapshot = await getDocs(collection(db, "Products"));
-        const products = querySnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setProductData(products);
-      } catch (error) {
-        console.error("Error fetching product data:", error);
-      }
-    };
+    if (productView) {
+      localStorage.setItem("productView", productView);
+    }
+  }, [productView]);
 
-    fetchProductData();
+  useEffect(() => {
+    const savedProductView = localStorage.getItem("productView");
+
+    if (savedProductView) {
+      setProductView(savedProductView);
+
+      const fetchProductData = async () => {
+        try {
+          const querySnapshot = await getDocs(collection(db, "Products"));
+          const products = querySnapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+          setProductData(products);
+        } catch (error) {
+          console.error("Error fetching product data:", error);
+        }
+      };
+
+      fetchProductData();
+    }
   }, []);
 
   const handleCartHover = (image) => {
@@ -50,11 +57,11 @@ function ProductView() {
   };
 
   return (
-    <section className="sm:py-10 md:px-16 px-10 py-5 h-screen">
+    <section className="sm:py-10 md:px-16 px-10 py-5">
       <div className="">
         <header>
           <h2 className="PoppinsFont mb-10">
-            Home / Flashsales /
+            <Link to="/home">Home</Link> / Flashsales /
             <span className="font-medium">Product view </span>
           </h2>
         </header>

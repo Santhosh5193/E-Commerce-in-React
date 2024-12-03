@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import Frame1 from "../../assets/images/Frame1.png";
-import Frame2 from "../../assets/images/Frame2.png";
-import Frame3 from "../../assets/images/Frame3.png";
-import Frame4 from "../../assets/images/Frame4.png";
-import Frame5 from "../../assets/images/Frame5.png";
+import Frame1 from "../../assets/images/Frame1.webp";
+import Frame2 from "../../assets/images/Frame2.webp";
+import Frame3 from "../../assets/images/Frame3.webp";
+import Frame4 from "../../assets/images/Frame4.webp";
+import Frame5 from "../../assets/images/Frame5.webp";
 
 function CarouselDefault() {
   const images = [Frame1, Frame2, Frame3, Frame4, Frame5];
@@ -18,11 +18,15 @@ function CarouselDefault() {
   }, [currentIndex]);
 
   return (
-    <div className="relative ">
+    <div className="relative flex justify-center items-end">
       <div>
-        <img className="h-[45vh]" src={images[currentIndex]} />
+        <img
+          src={images[currentIndex]}
+          alt="Image description"
+          className="h-full w-full"
+        />
       </div>
-      <div className="flex gap-3 absolute bottom-5 pl-[40%]">
+      <div className="flex gap-3 absolute sm:bottom-5 bottom-2 ">
         <button
           onClick={() => setCurrentIndex(0)}
           className={`${

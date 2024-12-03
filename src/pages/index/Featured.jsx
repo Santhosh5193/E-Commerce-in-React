@@ -9,19 +9,23 @@ import Services2 from "../../assets/icons/Services2.svg";
 
 function Featured() {
   return (
-    <div>
+    <div className="mt-10">
       <div>
-        <div className="head flex gap-3 items-center pb-5">
-          <div className="h-10 w-5 bg-secondary rounded-md"></div>
+        <div className="head flex gap-3 items-center pb-3 sm:pb-5">
+          <div className="sm:h-10 h-7 w-2 sm:w-5 bg-secondary rounded-md"></div>
           <h3 className="text-red-600 PoppinsFont font-semibold">Featured's</h3>
         </div>
-        <div className="Title InterFont sm:text-4xl text-2xl font-medium sm:pb-10 pb-4">
+        <div className="Title InterFont md:text-4xl sm:text-2xl font-medium sm:pb-10 pb-4">
           <h3>New Arrival</h3>
         </div>
 
         <div className="h-full  md:h-[600px] flex flex-col  md:flex-row gap-5 pb-10">
           <div className="w-full md:w-[50%] h-full max-h-[650px] relative">
-            <img src={ArraivalImg1} className="w-full h-full	" alt="" />
+            <img
+              src={ArraivalImg1}
+              className="w-full h-full	"
+              alt="ArraivalImg1"
+            />
             <div className="absolute sm:bottom-10 bottom-5 left-5">
               <h2 className="text-white sm:text-3xl font-semibold InterFont sm:mb-1">
                 PlayStation 5
@@ -37,7 +41,11 @@ function Featured() {
 
           <div className="flex flex-col w-full md:w-[50%] h-full justify-between gap-2">
             <div className="relative h-[50%]">
-              <img src={ArraivalImg2} className="w-full h-full" alt="" />
+              <img
+                src={ArraivalImg2}
+                className="w-full h-full"
+                alt="ArraivalImg2"
+              />
               <div className="absolute sm:bottom-3 bottom-5 left-5">
                 <h2 className="text-white sm:text-xl md:text-3xl font-semibold InterFont sm:mb-1">
                   Womens Collection
@@ -56,7 +64,7 @@ function Featured() {
                 <img
                   src={ArraivalImg3}
                   className="h-full w-full object-cover"
-                  alt=""
+                  alt="ArraivalImg3"
                 />
                 <div className="absolute sm:bottom-3 bottom-5 left-5">
                   <h2 className="text-white sm:text-xl md:text-2xl lg:text-3xl  font-semibold InterFont sm:mb-1">
@@ -74,7 +82,7 @@ function Featured() {
                 <img
                   src={ArraivalImg4}
                   className="h-full w-full object-cover	"
-                  alt=""
+                  alt="ArraivalImg4"
                 />
                 <div className="absolute sm:bottom-3 bottom-5 left-5">
                   <h2 className="text-white sm:text-xl md:text-2xl lg:text-3xl  font-semibold InterFont sm:mb-1">

@@ -1,12 +1,16 @@
-import { useEffect, useRef, useState } from "react";
-import cellPhone from "../../assets/BrowseCategery/images/cellPhone.svg";
+import { useContext, useEffect, useRef, useState } from "react";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../../firebase";
 import rightArrow from "../../assets/FlashSales/images/Arrowright.svg";
 import leftArrow from "../../assets/FlashSales/images/Arrowleft.svg";
+import { useNavigate } from "react-router-dom";
+import ExclusiveContext from "../../context/ExclusiveContext";
 
 function Categories() {
-  const [productData, setProductData] = useState([]);
+  const [productCategeoryData, setProductCategeoryData] = useState([]);
+  const { setSeachCategory, productData, setFilteredProducts } =
+    useContext(ExclusiveContext);
+  const navigate = useNavigate();
 
   //Fetch data from firebase
   useEffect(() => {
@@ -17,9 +21,13 @@ function Categories() {
           id: doc.id,
           ...doc.data(),
         }));
-        setProductData(products);
+        setProductCategeoryData(products);
       } catch (error) {
-        console.error("Error fetching product data:", error);
+        console.error(
+          "Error fetching product data:",
+          error.message,
+          error.code
+        );
       }
     };
 
@@ -47,23 +55,39 @@ function Categories() {
     }
   };
 
+  const handleCategerySearch = (name) => {
+    setSeachCategory(name);
+    if (name) {
+      const results = productData.filter((product) =>
+        product.category.includes(name)
+      );
+      setFilteredProducts(results);
+      console.log(results);
+
+      navigate("/SearchList");
+    } else {
+      setFilteredProducts([]);
+      navigate("/home");
+    }
+  };
+
   return (
     <div className="py-8 border-b-2">
       <div className="head flex gap-3 items-center pb-5">
-        <div className="h-10 w-5 bg-secondary rounded-md"></div>
+        <div className="sm:h-10 h-7 w-2 sm:w-5 bg-secondary rounded-md"></div>
         <h3 className="text-red-600 PoppinsFont font-semibold">Categories's</h3>
       </div>
       <div className=" flex justify-between">
-        <div className="Title InterFont md:text-4xl text-2xl font-medium pb-10 text-nowrap">
+        <div className="Title InterFont md:text-4xl sm:text-2xl font-medium pb-10 text-nowrap">
           <h3>Browser By Category</h3>
         </div>
-        <div className="arrows flex gap-3 ">
+        <div className="arrows flex gap-3  ">
           <div
             className="bg-gray-200 sm:w-9 sm:h-9 w-6 h-6 rounded-full flex items-center justify-center"
             onClick={scrollLeft}
           >
             <div className="sm:w-8 sm:h-8 w-5 h-5 flex justify-center items-center">
-              <img src={leftArrow} alt="" className="w-5 sm:w-full" />
+              <img src={leftArrow} alt="leftarrow" className="w-5 sm:w-full" />
             </div>
           </div>
           <div
@@ -71,23 +95,35 @@ function Categories() {
             onClick={scrollRight}
           >
             <div className="sm:w-8 sm:h-8 w-5 h-5 flex justify-center items-center">
-              <img src={rightArrow} alt="" className="w-5 sm:w-full" />
+              <img
+                src={rightArrow}
+                alt="rightarrow"
+                className="w-5 sm:w-full"
+              />
             </div>
           </div>
         </div>
       </div>
       <div
-        className="flex w-full space-x-7 flex-nowrap overflow-x-auto overflow-y-hidden"
+        className="flex w-full space-x-7 flex-nowrap overflow-x-auto overflow-y-hidden "
         ref={cardsRef}
         style={{ scrollbarWidth: "none" }}
       >
-        {productData.map((items) => (
+        {productCategeoryData.map((items) => (
           <div
-            className="py-8 px-12  border-2 rounded flex flex-col justify-center items-center cursor-pointer"
+            className="md:h-36 md:w-48 sm:w-40 sm:h-32 w-36 h-32 border-2 rounded flex flex-col justify-center items-center cursor-pointer"
             key={items.id}
+            style={{ flexShrink: 0 }}
+            onClick={() => handleCategerySearch(items.name)}
           >
-            <img src={items.image} alt="" className="pb-2 " />
-            <h1>{items.name}</h1>
+            <img
+              src={items.image}
+              alt={items.name}
+              className="md:h-16 h-10 sm:w-16 object-contain"
+            />
+            <h1 className="text-center sm:text-lg text-base mt-2">
+              {items.name}
+            </h1>
           </div>
         ))}
       </div>

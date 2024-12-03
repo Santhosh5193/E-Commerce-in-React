@@ -18,6 +18,8 @@ import ProductView from "./pages/ProductView";
 import Imageupload from "./pages/Imageupload";
 import Products from "./pages/Products";
 import ScrollingTop from "./components/ScrollingTop";
+import ManageAccount from "./pages/ManageAccount";
+import SeachList from "./components/SeachList";
 
 function App() {
   return (
@@ -33,9 +35,11 @@ function App() {
         <Route path="/cart" element={<Cart />} />
         <Route path="/cart/checkout" element={<CheckOut />} />
         <Route path="/about" element={<Aboutpage />} />
-        {/* <Route path="/contact" element={<Contact />} /> */}
+        <Route path="/contact" element={<Contact />} />
         <Route path="/productview" element={<ProductView />} />
         <Route path="/products" element={<Products />} />
+        <Route path="/myprofile" element={<ManageAccount />} />
+        <Route path="/searchlist" element={<SeachList />} />
         <Route path="/*" element={<Notfoundpage />} />
 
         {/* for sample */}

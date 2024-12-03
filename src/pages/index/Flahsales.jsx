@@ -72,14 +72,26 @@ function Flahsales() {
 
   //Scrolling section
   const cardsRef = useRef(null);
+
+  const getScrollAmount = () => {
+    return window.innerWidth <= 768 ? 270 : 300;
+  };
+
   const scrollLeft = () => {
     if (cardsRef.current) {
-      cardsRef.current.scrollBy({ left: -300, behavior: "smooth" });
+      cardsRef.current.scrollBy({
+        left: -getScrollAmount(),
+        behavior: "smooth",
+      });
     }
   };
+
   const scrollRight = () => {
     if (cardsRef.current) {
-      cardsRef.current.scrollBy({ left: 300, behavior: "smooth" });
+      cardsRef.current.scrollBy({
+        left: getScrollAmount(),
+        behavior: "smooth",
+      });
     }
   };
 
@@ -196,12 +208,12 @@ function Flahsales() {
   return (
     <div className="border-b-2 py-8">
       <div className="head flex gap-3 items-center pb-5">
-        <div className="h-10 w-5 bg-secondary rounded-md"></div>
+        <div className="sm:h-10 h-7 w-2 sm:w-5 bg-secondary rounded-md"></div>
         <h3 className="text-red-600 PoppinsFont font-semibold">Today's</h3>
       </div>
       <div className="flex justify-between">
         <div className="crad-head flex sm: pb-5 flex-col sm:flex-row  lg:gap-x-[89px] md:gap-x-[50px] gap-x-[15px] space-y-2">
-          <div className="Title InterFont md:text-4xl text-2xl font-medium text-nowrap">
+          <div className="Title InterFont md:text-4xl sm:text-2xl font-medium text-nowrap">
             <h3>Flash Sales</h3>
           </div>
           <div className="Timer flex items-center  sm:space-x-5 space-x-2">
@@ -250,7 +262,7 @@ function Flahsales() {
             onClick={scrollLeft}
           >
             <div className="sm:w-8 sm:h-8 w-5 h-5 flex justify-center items-center">
-              <img src={leftArrow} alt="" className="w-5 sm:w-full" />
+              <img src={leftArrow} alt="leftArrow" className="w-5 sm:w-full" />
             </div>
           </div>
           <div
@@ -258,7 +270,11 @@ function Flahsales() {
             onClick={scrollRight}
           >
             <div className="sm:w-8 sm:h-8 w-5 h-5 flex justify-center items-center">
-              <img src={rightArrow} alt="" className="w-5 sm:w-full" />
+              <img
+                src={rightArrow}
+                alt="rightarrow"
+                className="w-5 sm:w-full"
+              />
             </div>
           </div>
         </div>
@@ -276,13 +292,13 @@ function Flahsales() {
               onMouseEnter={() => handleCartHover(product.id)}
               onMouseLeave={handleCartHoverLeave}
             >
-              <div className=" card-1 relative w-[270px]  rounded-md border-2">
-                <div className="card-head relative h-[270px] flex flex-col justify-center items-center border-b-2">
+              <div className=" card-1 relative sm:w-[270px]  rounded-md border-2">
+                <div className="card-head relative h-[230px] sm:h-[270px] flex flex-col justify-center items-center border-b-2">
                   <img
                     src={product.image[0]}
-                    alt=""
+                    alt={product.productName}
                     tabIndex="0"
-                    className="w-[80%] h-[70%] object-contain cursor-pointer"
+                    className="sm:w-[80%] sm:h-[70%] w-[60%] h-[60%] object-contain cursor-pointer"
                   />
                   <button
                     className={`w-full absolute bottom-0 flex justify-center gap-3 py-2  bg-black text-white transition-all duration-300 ${
@@ -291,7 +307,7 @@ function Flahsales() {
                         : "invisible opacity-0"
                     } `}
                   >
-                    <img src={Carticon} alt="" />
+                    <img src={Carticon} alt="Carticon" />
                     {checkCartList ? (
                       <Link to="/cart">
                         <p>Go to Cart</p>
@@ -328,7 +344,7 @@ function Flahsales() {
                           ) : (
                             <img
                               src={wishlisticon1}
-                              alt=""
+                              alt="wishlisticon1"
                               onClick={() => handleAddToList(product.id, true)}
                             />
                           )}
@@ -355,7 +371,7 @@ function Flahsales() {
                     </div>
                     <div className="star flex gap-2 py-1">
                       {product?.ratings.map((star) => (
-                        <img src={Star} key={star} />
+                        <img src={Star} key={star} alt="star" />
                       ))}
                     </div>
                   </div>
@@ -366,12 +382,12 @@ function Flahsales() {
       </div>
       <div className=" flex justify-center">
         <Link to="/products">
-          <button className=" PoppinsFont bg-secondary py-2 rounded-md  w-[230px] text-white text-base">
+          <button className=" ">
             View All Products
           </button>
         </Link>
       </div>
-      <ToastContainer autoClose={2000} />;
+      <ToastContainer autoClose={2000} />
     </div>
   );
 }

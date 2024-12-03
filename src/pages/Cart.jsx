@@ -155,7 +155,7 @@ function Cart() {
                 ))}
               </table>
             </div>
-            <div className="flex md:justify-end justify-center">
+            <div className="flex md:justify-end justify-center text-sm sm:text-base">
               <div className="border-2 md:px-10 sm:px-5 mx-5 px-3 py-5 lg:w-[40%] md:w-[50%] sm:w-[50%] w-[100%]">
                 <h2 className="font-medium mb-3">Cart Total</h2>
                 <div className="border-b-2 mb-2 flex justify-between">
@@ -171,7 +171,7 @@ function Cart() {
                   <p className="">₹{totalPrice}</p>
                 </div>
                 <div
-                  className="rounded sm:w-[70%] mx-auto py-2 mt-5 text-center "
+                  className="rounded w-[60%] sm:w-[70%] mx-auto py-2 mt-5 text-center "
                   style={{ background: "#DB4444", color: "white" }}
                 >
                   <button type="submit">

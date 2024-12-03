@@ -27,6 +27,8 @@ export const ContextProvider = ({ children }) => {
   const [subTotalPrice, setSubTotalPrice] = useState(0);
   const [checkWishList, setCheckWishList] = useState(false);
   const [wishlistChange, setWishlistChagne] = useState(false);
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [seachCategory, setSeachCategory] = useState("");
 
   // Fetch and set the user ID when auth state changes
   useEffect(() => {
@@ -138,15 +140,6 @@ export const ContextProvider = ({ children }) => {
     setSubTotalPrice(subTotalPrice.toFixed(2));
   }, [cartlistProducts]);
 
-  // const prevWishlistProductIds = useRef();
-
-  // Rendering wishlist product
-  // useEffect(() => {
-  //   if (prevWishlistProductIds.current !== wishlistProductIds.length) {
-  //     prevWishlistProductIds.current = wishlistProductIds.length;
-  //   }
-  // }, [wishlistProductIds]);
-
   const shippingCost = cartlistProducts.length * 20;
   const totalPrice = Number(subTotalPrice) + Number(shippingCost);
 
@@ -174,6 +167,10 @@ export const ContextProvider = ({ children }) => {
         shippingCost,
         totalPrice,
         setWishlistChagne,
+        filteredProducts,
+        setFilteredProducts,
+        seachCategory,
+        setSeachCategory,
       }}
     >
       {children}

@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Vector from "../assets/icons/Vector.png";
 import Cart1 from "../assets/icons/Cart1.png";
 import { useState, useRef, useContext, useEffect } from "react";
@@ -15,18 +15,27 @@ import ExclusiveContext from "../context/ExclusiveContext";
 import { getAuth, signOut } from "firebase/auth";
 import OustsideClick from "./OustsideClick";
 import Swal from "sweetalert2";
+import { useLocation } from "react-router-dom";
 import hearticon from "../assets/icons/Hearticon.svg";
 import heartwishlisticon from "../assets/icons/wishlisthearticon.svg";
 
 function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-  const { userId, setUserId, wishlistProductIds, cartlistProducts } =
-    useContext(ExclusiveContext);
+  const {
+    userId,
+    setUserId,
+    wishlistProductIds,
+    cartlistProducts,
+    productData,
+    setFilteredProducts,
+  } = useContext(ExclusiveContext);
   const [isWishlistlength, setIsWishlistlength] = useState(0);
   const [isCartlistlength, setIsCartlistlength] = useState(0);
+  const [searchText, setSearchText] = useState("");
   const wrapperRef = useRef(null);
   const auth = getAuth();
+  const navigate = useNavigate();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -69,13 +78,35 @@ function Navbar() {
     setIsCartlistlength(cartlistitems);
   }, [cartlistProducts]);
 
+  const hadleSearchlist = (e) => {
+    const input = e.target.value.toUpperCase();
+    setSearchText(e.target.value);
+    if (input) {
+      const results = productData.filter((product) =>
+        product.productName.toUpperCase().includes(input)
+      );
+      setFilteredProducts(results);
+      navigate("/SearchList");
+    } else {
+      setFilteredProducts([]);
+
+      navigate("/home");
+    }
+  };
+
+  useEffect(() => {
+    if (location.pathname !== "/SearchList") {
+      setSearchText("");
+    }
+  }, [navigate]);
+
   return (
     <nav className="border-b-2 sm:px-10 pt-5 pb-2 px-5">
       <div className="flex justify-evenly lg:justify-between md:justify-evenly md:items-center sm:justify-between items-center gap-5">
         <div className="flex justify-around ssm:w-10 md:w-1/2 md:gap-3">
           <div className="">
             <h3 className="InterFont font-bold md:text-2xl sm:text-xl text-base">
-              Exclusive
+              <Link to="/home"> Exclusive</Link>
             </h3>
           </div>
           <div className="hidden md:flex items-center">
@@ -110,16 +141,12 @@ function Navbar() {
             </label>
             <input
               type="text"
+              value={searchText}
               placeholder="Search.."
               id="search"
               name="search"
-              className="hidden sm:block outline-none bg-inherit md:pl-8 w-full h-full"
-            />
-            <input
-              type="text"
-              id="search"
-              name="search"
-              className="block sm:hidden outline-none bg-inherit w-full h-full"
+              className="outline-none bg-inherit w-full h-full"
+              onChange={hadleSearchlist}
             />
           </form>
           <div className="hidden md:flex items-center md:gap-2 lg:gap-5 gap-2">
@@ -172,7 +199,7 @@ function Navbar() {
                 <div className="py-1" role="none">
                   {userId ? (
                     <Link
-                      to="/"
+                      to="/myprofile"
                       className="flex gap-4 items-center  px-4 py-2 text-sm PoppinsFont text-white"
                     >
                       <img src={user} alt="" />
