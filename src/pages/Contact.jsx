@@ -1,4 +1,4 @@
-import Phoneicon from "../assets/icons/Phone.svg";
+import Phoneicon from "../assets/icons/phone.svg";
 import Mailicon from "../assets/icons/Mail.svg";
 
 function Contact() {
