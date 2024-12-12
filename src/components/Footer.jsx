@@ -1,8 +1,8 @@
-import fbicon from "../assets/icons/fbicon.png";
-import insta from "../assets/icons/insta.png";
-import twitter from "../assets/icons/twitter.png";
-import linkedin from "../assets/icons/in.png";
-import mailsend from "../assets/icons/mailsend.png";
+import fbicon from "../assets/icons/fbicon.svg";
+import insta from "../assets/icons/instaicon.svg";
+import twitter from "../assets/icons/Twitter.svg";
+import linkedin from "../assets/icons/linkedin.svg";
+import mailsend from "../assets/icons/emailsend.svg";
 import QrCode from "../assets/icons/Qrcode.svg";
 import Appstore from "../assets/icons/AppStore.svg";
 import Googlestore from "../assets/icons/GooglePlay.svg";
@@ -27,7 +27,7 @@ function Footer() {
             placeholder="Enter your email"
           />
           <label htmlFor="email" className="flex-none px-2 py-1">
-            <img src={mailsend} alt="" />
+            <img src={mailsend} alt="mailsend" />
           </label>
         </div>
       </div>
@@ -67,24 +67,24 @@ function Footer() {
           Save $3 with App New User Only
         </p>
         <div className="flex gap-3">
-          <img src={QrCode} alt="" />
+          <img src={QrCode} alt="QrCode" />
           <div className="flex flex-col gap-1">
-            <img src={Appstore} alt="" />
-            <img src={Googlestore} alt="" />
+            <img src={Appstore} alt="Appstore" />
+            <img src={Googlestore} alt="Googlestore" />
           </div>
         </div>
         <ul className="flex gap-5 mt-4">
           <li>
-            <img className="" src={fbicon} alt="" />
+            <img src={QrCode} alt="QrCode" />
           </li>
           <li>
-            <img src={insta} alt="" />
+            <img src={insta} alt="insta" />
           </li>
           <li>
-            <img src={twitter} alt="" />
+            <img src={twitter} alt="twitter" />
           </li>
           <li>
-            <img src={linkedin} alt="" />
+            <img src={linkedin} alt="linkedin" />
           </li>
         </ul>
       </div>

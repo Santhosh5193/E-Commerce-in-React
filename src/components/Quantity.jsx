@@ -2,8 +2,6 @@ import { useState, useContext } from "react";
 import ExclusiveContext from "../context/ExclusiveContext";
 
 function Quantity() {
-  // const [setIncrement, isSetIncrement] = useState(1);
-
   const { setIncrement, isSetIncrement } = useContext(ExclusiveContext);
   const [click, isClicked] = useState(null);
 

@@ -1,23 +1,13 @@
 import { Link, useNavigate } from "react-router-dom";
 import Vector from "../assets/icons/Vector.png";
-import Cart1 from "../assets/icons/Cart1.png";
 import { useState, useRef, useContext, useEffect } from "react";
 import Wishlisticon from "../assets/svg/Wishlisticon";
 import Carticon from "../assets/svg/Carticon";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { FaRegUser } from "react-icons/fa";
-import user from "../assets/icons/User.svg";
-import mallbag from "../assets/icons/Mallbag.svg";
-import cancel from "../assets/icons/cancel.svg";
-import logout from "../assets/icons/Logout.svg";
-import review from "../assets/icons/Reviews.svg";
 import ExclusiveContext from "../context/ExclusiveContext";
 import { getAuth, signOut } from "firebase/auth";
 import OustsideClick from "./OustsideClick";
-import Swal from "sweetalert2";
-import { useLocation } from "react-router-dom";
-import hearticon from "../assets/icons/Hearticon.svg";
-import heartwishlisticon from "../assets/icons/wishlisthearticon.svg";
 import UserMenu from "./UserMenu";
 
 function Navbar() {
