@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import OustsideClick from "./OustsideClick";
 import user from "../assets/icons/User.svg";
 import mallbag from "../assets/icons/Mallbag.svg";
-import cancel from "../assets/icons/cancel.svg";
+import cancel from "../assets/icons/Cancel.svg";
 import logout from "../assets/icons/Logout.svg";
 import review from "../assets/icons/Reviews.svg";
 import Swal from "sweetalert2";
