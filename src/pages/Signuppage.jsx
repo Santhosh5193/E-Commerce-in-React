@@ -149,7 +149,7 @@ function Signuppage() {
         password
       );
       const user = userCredential.user;
-      const loginTime = new Date();
+      // const loginTime = new Date();
 
       // Save additional user information in Firestore
       await setDoc(doc(db, "users", user.uid), {
@@ -195,15 +195,20 @@ function Signuppage() {
       const loginTime = new Date();
 
       await setDoc(doc(db, "users", user.uid), {
-        name: user.displayName,
+        name: user.displayName || "Anonymous",
         email: user.email,
         uid: user.uid,
-        loginTime: loginTime.toISOString(),
+        loginTime: moment().format("DD-MM-YYYY HH:MM:SS"),
       });
 
       setUserId(user.uid);
     } catch (error) {
-      console.log(err.message);
+      Swal.fire({
+        icon: "error",
+        title: "Google Sign-In Failed",
+        text: err.message,
+        showConfirmButton: true,
+      });
     }
   };
 
@@ -296,27 +301,27 @@ function Signuppage() {
           >
             <button type="submit">Create Account</button>
           </div>
-
-          <div
-            className="border-2 rounded w-[50%] mt-8  p-2 flex justify-center items-center"
-            onClick={handleGoogleLogin}
-          >
-            <button className="flex items-center md:gap-3 gap-2">
-              <img src={Googleicon} alt="Googleicon" className="w-4" />
-              <p className="sm:text-base text-sm ">Sign up with Google</p>
-            </button>
-          </div>
-          <p className="mt-8 text-center w-[50%]" style={{ color: "#000000" }}>
-            Already have account?
-            <Link
-              to="/login"
-              style={{ color: "blue" }}
-              className="font-medium pl-3 underline underline-offset-4"
-            >
-              Log in
-            </Link>
-          </p>
         </form>
+
+        <div
+          className="border-2 rounded w-[50%] mt-8  p-2 flex justify-center items-center"
+          onClick={handleGoogleLogin}
+        >
+          <button className="flex items-center md:gap-3 gap-2">
+            <img src={Googleicon} alt="Googleicon" className="w-4" />
+            <p className="sm:text-base text-sm ">Sign up with Google</p>
+          </button>
+        </div>
+        <p className="mt-8 text-center w-[50%]" style={{ color: "#000000" }}>
+          Already have account?
+          <Link
+            to="/login"
+            style={{ color: "blue" }}
+            className="font-medium pl-3 underline underline-offset-4"
+          >
+            Log in
+          </Link>
+        </p>
       </div>
     </div>
   );
