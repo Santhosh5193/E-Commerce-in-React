@@ -15,7 +15,7 @@ import { Link } from "react-router-dom";
 function Aboutpage() {
   return (
     <div className="md:py-10 md:px-16 px-10 py-5">
-      <section className="">
+      <section>
         <header>
           <h2 className="">
             <Link to="/"> Home</Link> /{" "}
