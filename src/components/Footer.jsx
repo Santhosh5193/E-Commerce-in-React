@@ -1,5 +1,5 @@
 import fbicon from "../assets/icons/fbicon.svg";
-import insta from "../assets/icons/instaicon.svg";
+import insta from "../assets/icons/Instagram.svg";
 import twitter from "../assets/icons/Twitter.svg";
 import linkedin from "../assets/icons/linkedin.svg";
 import mailsend from "../assets/icons/emailsend.svg";
@@ -75,7 +75,7 @@ function Footer() {
         </div>
         <ul className="flex gap-5 mt-4">
           <li>
-            <img src={QrCode} alt="QrCode" />
+            <img src={fbicon} alt="QrCode" />
           </li>
           <li>
             <img src={insta} alt="insta" />
