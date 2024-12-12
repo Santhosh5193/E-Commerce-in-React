@@ -18,15 +18,14 @@ function CarouselDefault() {
   }, [currentIndex]);
 
   return (
-    <div className="relative flex justify-center items-end">
-      <div>
-        <img
-          src={images[currentIndex]}
-          alt="Image description"
-          className="h-full w-full"
-        />
-      </div>
-      <div className="flex gap-3 absolute sm:bottom-5 bottom-2 ">
+    <div className="relative">
+      <img
+        src={images[currentIndex]}
+        alt="Image description"
+        className="h-full"
+      />
+
+      <div className="flex gap-3 absolute sm:bottom-5 bottom-2 right-[45%] ">
         <button
           onClick={() => setCurrentIndex(0)}
           className={`${

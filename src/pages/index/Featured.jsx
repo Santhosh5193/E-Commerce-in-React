@@ -104,21 +104,27 @@ function Featured() {
         <div className="flex flex-col items-center">
           <img src={Services} alt="Services" className="pb-3" />
           <div className="text-center">
-            <h3 className="font-bold pb-1 text-xl">FREE AND FAST DELIVERY </h3>
+            <h3 className="font-bold pb-1 sm:text-xl">
+              FREE AND FAST DELIVERY
+            </h3>
             <p className="text-sm">Free delivery for all orders over $130</p>
           </div>
         </div>
         <div className="flex flex-col items-center">
           <img src={Services1} alt="Services1" className="pb-3" />
           <div className="text-center">
-            <h3 className="font-bold pb-1 text-xl">FREE AND FAST DELIVERY </h3>
+            <h3 className="font-bold pb-1 sm:text-xl">
+              FREE AND FAST DELIVERY
+            </h3>
             <p className="text-sm">Free delivery for all orders over $130</p>
           </div>
         </div>
         <div className="flex flex-col items-center">
           <img src={Services2} alt="Services2" className="pb-3" />
           <div className="text-center">
-            <h3 className="font-bold pb-1 text-xl">FREE AND FAST DELIVERY </h3>
+            <h3 className="font-bold pb-1 sm:text-xl">
+              FREE AND FAST DELIVERY
+            </h3>
             <p className="text-sm">Free delivery for all orders over $130</p>
           </div>
         </div>

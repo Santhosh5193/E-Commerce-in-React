@@ -57,10 +57,10 @@ function ProductView() {
   };
 
   return (
-    <section className="sm:py-10 md:px-16 px-10 py-5">
+    <section className="sm:py-10 md:px-16 sm:px-10 px-7 py-5">
       <div className="">
         <header>
-          <h2 className="PoppinsFont mb-10">
+          <h2 className="PoppinsFont sm:mb-10 mb-5">
             <Link to="/home">Home</Link> / Flashsales /
             <span className="font-medium">Product view </span>
           </h2>
@@ -103,29 +103,31 @@ function ProductView() {
 
             <div className="flex md:w-1/2">
               <div className="">
-                <h2 className="InterFont text-[24px] font-semibold">
+                <h2 className="InterFont sm:text-2xl  font-semibold">
                   {item.productName}
                 </h2>
-                <div className="flex justify-center sm:justify-start flex-wrap space-x-5 items-center py-2">
-                  <div className="star flex  gap-2 py-1">
+                <div className="flex justify-start flex-wrap sm:space-x-5 space-x-2 items-center py-2">
+                  <div className="star flex gap-2 py-1">
                     {item.ratings.map((_, index) => (
                       <img
                         key={index}
                         src={Star}
                         alt=""
-                        className="w-[20px] h-[20px]"
+                        className="sm:w-[20px] sm:h-[20px] "
                       />
                     ))}
                   </div>
-                  <p className="PoppinsFont text-gray-300 pr-4 border-r-2">
+                  <p className="PoppinsFont text-gray-300 sm:pr-4 pr-2 border-r-2 text-sm">
                     (150 Reviews)
                   </p>
                   <p className="PoppinsFont" style={{ color: "#00FF66" }}>
                     In Stock
                   </p>
                 </div>
-                <p className="InterFont text-[24px] mb-2">₹{item.price}</p>
-                <p className="PoppinsFont pb-4  border-b-2">
+                <p className="InterFont text-[24px] mb-2">
+                  ₹{item.originalPrice}
+                </p>
+                <p className="PoppinsFont pb-4  border-b-2 text-sm sm:text-base">
                   {item.description}
                 </p>
                 {/* 

@@ -8,7 +8,7 @@ import ExclusiveContext from "../../context/ExclusiveContext";
 
 function Categories() {
   const [productCategeoryData, setProductCategeoryData] = useState([]);
-  const { setSeachCategory, productData, setFilteredProducts } =
+  const { setSeachCategory, productData, userId, setFilteredProducts } =
     useContext(ExclusiveContext);
   const navigate = useNavigate();
 
@@ -30,7 +30,6 @@ function Categories() {
         );
       }
     };
-
     fetchProductData();
   }, []);
 
@@ -41,7 +40,7 @@ function Categories() {
   const scrollLeft = () => {
     if (cardsRef.current) {
       const containerWidth = cardsRef.current.offsetWidth;
-      const scrollAmount = containerWidth * 0.2; // 20% of the container width
+      const scrollAmount = containerWidth * 0.5; // 20% of the container width
       cardsRef.current.scrollBy({ left: -scrollAmount, behavior: "smooth" });
     }
   };
@@ -50,7 +49,7 @@ function Categories() {
   const scrollRight = () => {
     if (cardsRef.current) {
       const containerWidth = cardsRef.current.offsetWidth;
-      const scrollAmount = containerWidth * 0.2; // 20% of the container width
+      const scrollAmount = containerWidth * 0.5; // 20% of the container width
       cardsRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
     }
   };
@@ -62,8 +61,6 @@ function Categories() {
         product.category.includes(name)
       );
       setFilteredProducts(results);
-      console.log(results);
-
       navigate("/SearchList");
     } else {
       setFilteredProducts([]);

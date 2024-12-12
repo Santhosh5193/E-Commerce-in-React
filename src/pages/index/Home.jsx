@@ -5,11 +5,14 @@ import SellingProducts from "./SellingProducts";
 import FrameAddimg from "../../assets/images/FrameAdd.png";
 import OurProducts from "./OurProducts";
 import Featured from "./Featured";
+import { useContext } from "react";
+import ExclusiveContext from "../../context/ExclusiveContext";
 
 function Home() {
+  const { timeLeft } = useContext(ExclusiveContext);
   return (
     <div className="sm:px-16 px-7">
-      <div className="lg:flex gap-24 sm:py-5 pt-5">
+      <div className="lg:flex gap-12 sm:py-5 pt-5">
         <div className="lg:block hidden border-r-2 pr-28">
           <ul className="listfont leading-9 text-nowrap">
             <li className="">Men's Fashion</li>
@@ -23,15 +26,13 @@ function Home() {
             <li className="">Health & Beauty</li>
           </ul>
         </div>
-        <div>
-          <CarouselDefault />
-        </div>
+        <CarouselDefault />
       </div>
       <Flahsales />
       <Categories />
       <SellingProducts />
       <div
-        className="pb-16 text-white h-[60vh] px-12 py-16"
+        className="pb-16 text-white lg:h-[60vh] px-12 py-16"
         style={{
           backgroundImage: `url(${FrameAddimg})`,
           backgroundSize: "cover",
@@ -48,25 +49,29 @@ function Home() {
           <div className={`PoppinsFont flex gap-4`}>
             <div className="day text-black flex flex-col justify-center items-center bg-white w-14 h-14 rounded-full">
               <h2 className=" leading-3  text-base pb-[-10px]  font-semibold">
-                23
+                {timeLeft.days < 10 ? `0${timeLeft.days}` : timeLeft.days}
               </h2>
-              <p className="leading-3  text-[11px] ">Days</p>
+              <p className="leading-3  text-[11px] ">days</p>
             </div>
             <div className="day text-black flex flex-col justify-center items-center bg-white w-14 h-14 rounded-full">
               <h2 className=" leading-3  text-base pb-[-10px] font-semibold">
-                03
+                {timeLeft.hours < 10 ? `0${timeLeft.hours}` : timeLeft.hours}
               </h2>
               <p className="leading-3  text-[11px]">Hours</p>
             </div>
             <div className="day text-black flex flex-col justify-center items-center bg-white w-14 h-14 rounded-full">
               <h2 className=" leading-3  text-base pb-[-10px] font-semibold">
-                23
+                {timeLeft.minutes < 10
+                  ? `0${timeLeft.minutes}`
+                  : timeLeft.minutes}
               </h2>
               <p className="leading-3  text-[11px]">Minutes</p>
             </div>
             <div className="day text-black flex flex-col justify-center items-center bg-white w-14 h-14 rounded-full">
               <h2 className=" leading-3  text-base pb-[-10px] font-semibold">
-                23
+                {timeLeft.seconds < 10
+                  ? `0${timeLeft.seconds}`
+                  : timeLeft.seconds}
               </h2>
               <p className="leading-3  text-[11px]">Seconds</p>
             </div>

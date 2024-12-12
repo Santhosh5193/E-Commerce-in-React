@@ -10,7 +10,7 @@ function Imageupload() {
 
   const handleImageUpload = async (event) => {
     const files = event.target.files;
-    if (files.length > 3) {
+    if (files.length > 4) {
       event.target.files = "";
       return;
     }
@@ -55,19 +55,34 @@ function Imageupload() {
       return;
     }
 
+    // const productData = {
+    //   productName: "NIKON Z 50 Mirrorless Camera",
+    //   description:
+    //     "Compact and lightweight mirrorless camera with a 20.9 MP DX-format sensor, 4K UHD video recording, and built-in Wi-Fi for stunning photos and videos. Ideal for creators on the go.",
+    //   offerPrice: 85999.99,
+    //   originalPrice: 90000,
+    //   offer: "4% OFF",
+    // image: imageUrl,
+    //   ratings: [1, 2, 3, 4, 5],
+    //   stockLeft: 20,
+    //   category: "electronics",
+    //   type: "Explore-Products",
+    // };
     const productData = {
-      productName: "NIKON Z 50 Mirrorless Camera",
+      productName: "boAt Rockerz 450",
       description:
-        "Compact and lightweight mirrorless camera with a 20.9 MP DX-format sensor, 4K UHD video recording, and built-in Wi-Fi for stunning photos and videos. Ideal for creators on the go.",
-      offerPrice: 85999.99,
-      originalPrice: 90000,
-      offer: "4% OFF",
-      image: imageUrl,
+        "On-ear Bluetooth headphones with 40mm drivers, 15 hours of playback, and soft padded earcups. Available in Luscious Black.",
+      offer: "20% Off",
+      offerPrice: 1199,
+      originalPrice: 1499,
+      price: 1199,
+      image: imageUrl, // Replace with the actual image URL
       ratings: [1, 2, 3, 4, 5],
-      stockLeft: 20,
+      stockLeft: 35,
       category: "electronics",
       type: "Explore-Products",
     };
+
     // const productData = {
     //   image: imageUrl,
     //   name: "HeadPhones",

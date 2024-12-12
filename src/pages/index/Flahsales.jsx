@@ -382,7 +382,7 @@ function Flahsales() {
       </div>
       <div className=" flex justify-center">
         <Link to="/products">
-          <button className=" ">
+          <button className=" PoppinsFont bg-secondary py-2 rounded-md w-[150px] sm:w-[230px] text-white sm:text-base text-sm ">
             View All Products
           </button>
         </Link>

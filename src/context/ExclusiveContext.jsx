@@ -29,6 +29,7 @@ export const ContextProvider = ({ children }) => {
   const [wishlistChange, setWishlistChagne] = useState(false);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [seachCategory, setSeachCategory] = useState("");
+  const [userlist, setUserList] = useState([]);
 
   // Fetch and set the user ID when auth state changes
   useEffect(() => {
@@ -106,7 +107,7 @@ export const ContextProvider = ({ children }) => {
             return prev;
           });
         } else {
-          console.log("No Cartlist found for this user.");
+          // console.log("No Cartlist found for this user.");
         }
 
         // Fetch Wishlist
@@ -116,7 +117,7 @@ export const ContextProvider = ({ children }) => {
           const existingWishlistProducts = wishlistDoc.data().products || [];
           setWishlistProducts(existingWishlistProducts);
         } else {
-          console.log("No Wishlist found for this user.");
+          // console.log("No Wishlist found for this user.");
         }
       } catch (error) {
         console.error("Error fetching lists data:", error.message);
@@ -124,7 +125,7 @@ export const ContextProvider = ({ children }) => {
     };
 
     fetchCartStatus();
-  }, [auth.currentUser?.uid, productData, checkCartList, wishlistProductIds]);
+  }, [auth.currentUser?.uid, productData, checkCartList]);
 
   useEffect(() => {
     const productIds = wishlistProducts.map((i) => i.id);
@@ -142,6 +143,25 @@ export const ContextProvider = ({ children }) => {
 
   const shippingCost = cartlistProducts.length * 20;
   const totalPrice = Number(subTotalPrice) + Number(shippingCost);
+
+  //Fetching User list
+  useEffect(() => {
+    const fetchUserDetails = async () => {
+      if (userId) {
+        try {
+          const querySnapshot = await getDocs(collection(db, "users"));
+          const products = querySnapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+          setUserList(products);
+        } catch (error) {
+          console.error("Error fetching users data:", error);
+        }
+      }
+    };
+    fetchUserDetails();
+  }, [userId]);
 
   return (
     <ExclusiveContext.Provider
@@ -171,6 +191,8 @@ export const ContextProvider = ({ children }) => {
         setFilteredProducts,
         seachCategory,
         setSeachCategory,
+        userlist,
+        setUserList,
       }}
     >
       {children}

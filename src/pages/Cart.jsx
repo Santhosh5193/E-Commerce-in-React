@@ -196,7 +196,7 @@ function Cart() {
           </div>
         )}
       </div>
-      <ToastContainer autoClose={2000} />;
+      <ToastContainer autoClose={2000} />
     </section>
   );
 }

@@ -18,7 +18,8 @@ import ProductView from "./pages/ProductView";
 import Imageupload from "./pages/Imageupload";
 import Products from "./pages/Products";
 import ScrollingTop from "./components/ScrollingTop";
-import ManageAccount from "./pages/ManageAccount";
+import ManageAccount from "./pages/MyProfile/ManageAccount";
+import Profileinfo from "./pages/MyProfile/Profileinfo";
 import SeachList from "./components/SeachList";
 
 function App() {
@@ -38,14 +39,17 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/productview" element={<ProductView />} />
         <Route path="/products" element={<Products />} />
-        <Route path="/myprofile" element={<ManageAccount />} />
+        <Route path="/myaccount" element={<ManageAccount />}>
+          <Route path="profileInformation" element={<Profileinfo />} />
+          <Route path="myOrders" element={<h2>my orders</h2>} />
+        </Route>
         <Route path="/searchlist" element={<SeachList />} />
         <Route path="/*" element={<Notfoundpage />} />
 
         {/* for sample */}
         {/* <Route path="/about" element={<Quantity />} /> */}
         {/* <Route path="/login" element={<Sample />} /> */}
-        <Route path="/contact" element={<Imageupload />} />
+        {/* <Route path="/contact" element={<Imageupload />} /> */}
       </Routes>
       <Footer />
     </div>

@@ -1,23 +1,30 @@
 import Loginimg from "../assets/images/LoginImage.png";
 import Googleicon from "../assets/icons/Googleicon.svg";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
+  signInWithPopup,
 } from "firebase/auth";
-import { useState } from "react";
-import { auth } from "../../firebase";
+import { useContext, useState } from "react";
+import { auth, db, googleProvider } from "../../firebase";
 import Swal from "sweetalert2";
+import { setDoc, doc } from "firebase/firestore";
+import ExclusiveContext from "../context/ExclusiveContext";
 
 const initialFormValues = {
   fname: "",
   email: "",
+  mobileNumber: "",
   password: "",
 };
 
 function Signuppage() {
+  const { setUserId } = useContext(ExclusiveContext);
   const [formValues, setFormValues] = useState(initialFormValues);
   const [errors, setErrors] = useState({});
+  const navigate = useNavigate();
+
   const emailValidation =
     /^[a-z0-9._%+-]+@(gmail\.com|yahoo\.com|outlook\.com)$/;
   const upperCase = /[A-Z]/;
@@ -36,11 +43,17 @@ function Signuppage() {
       }
     });
     setErrors(formErrors);
-    submitToFireBase();
 
-    // if (Object.keys(formErrors).length === 0) {
-    //   setFormValues(initialFormValues);
-    // }
+    if (Object.keys(formErrors).length === 0) {
+      submitToFireBase();
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "Please fix the errors before submitting",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    }
   };
 
   const handlechange = (e) => {
@@ -89,6 +102,17 @@ function Signuppage() {
           return null;
         }
 
+      case "mobileNumber":
+        if (value === "") {
+          return "Enter your mobile number";
+        } else if (value.length < 10) {
+          return "Please enter valid mobile number";
+        } else if (value.length >= 11) {
+          return "Your mobile number is Must be 10 letters only";
+        } else {
+          return null;
+        }
+
       case "password":
         const number = /[0-9]/;
         const specialCharacters = /^(?=.*?[#?!@$%^&*-])/;
@@ -114,24 +138,73 @@ function Signuppage() {
     }
   }
 
-  const submitToFireBase = () => {
-    const { email, password } = formValues;
+  const submitToFireBase = async () => {
+    const { fname, email, mobileNumber, password } = formValues;
 
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
-        Swal.fire({
-          icon: "success",
-          title: "Successfully Created",
-          showConfirmButton: false,
-          timer: 1500,
-        });
-        setFormValues(initialFormValues);
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
+    try {
+      // Create a new user in Firebase Authentication
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userCredential.user;
+      const loginTime = new Date();
+
+      // Save additional user information in Firestore
+      await setDoc(doc(db, "users", user.uid), {
+        name: fname,
+        email: email,
+        mobileNumber: mobileNumber,
+        loginTime: moment().format("DD-MM-YYYY HH:MM:SS"),
       });
+
+      Swal.fire({
+        icon: "success",
+        title: "Account successfully created",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+      navigate("/");
+
+      // Reset form values after successful signup
+      setFormValues(initialFormValues);
+    } catch (error) {
+      console.error("Error creating account:", error.message);
+    }
+  };
+
+  // avoid e and and space character for mobile number
+  const mobileValidation = (e) => {
+    if (e.keyCode == 69 || e.keyCode == 189 || e.keyCode == 187) {
+      e.preventDefault();
+    }
+  };
+  const AvoidSpace = (event) => {
+    if (event.charCode == 32 || event.keyCode == 32) {
+      event.preventDefault();
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const user = result.user;
+      console.log("Google login successful, User:", user);
+
+      const loginTime = new Date();
+
+      await setDoc(doc(db, "users", user.uid), {
+        name: user.displayName,
+        email: user.email,
+        uid: user.uid,
+        loginTime: loginTime.toISOString(),
+      });
+
+      setUserId(user.uid);
+    } catch (error) {
+      console.log(err.message);
+    }
   };
 
   return (
@@ -140,7 +213,7 @@ function Signuppage() {
         <img
           src={Loginimg}
           className="w-full h-[481px] object-cover"
-          alt="logn Image"
+          alt="login Image"
         />
       </div>
       <div className="md:w-1/2 w-full  md:items-start">
@@ -153,6 +226,7 @@ function Signuppage() {
         <form
           className="flex flex-col PoppinsFont mt-[7%]"
           onSubmit={handleFormSubmit}
+          onKeyDown={AvoidSpace}
         >
           <div className="pb-6">
             <input
@@ -161,7 +235,7 @@ function Signuppage() {
               name="fname"
               value={formValues.fname}
               placeholder="Name"
-              className="border-b-2 sm:w-[50%] outline-none"
+              className="border-b-2 sm:w-[50%] lg:w-[60%] outline-none"
             />
             {errors.fname && (
               <div className="emailMessage text-xs  text-red-500 font-medium">
@@ -176,11 +250,27 @@ function Signuppage() {
               name="email"
               value={formValues.email}
               placeholder="Email"
-              className="border-b-2 sm:w-[50%] outline-none"
+              className="border-b-2 sm:w-[50%] lg:w-[60%] outline-none"
             />
             {errors.email && (
-              <div className="emailMessage text-xs pb-3 text-red-500 font-medium">
+              <div className="emailMessage text-xs  text-red-500 font-medium">
                 {errors.email}
+              </div>
+            )}
+          </div>
+          <div className="pb-6">
+            <input
+              onChange={handlechange}
+              type="number"
+              name="mobileNumber"
+              placeholder="Mobile Number"
+              value={formValues.mobileNumber}
+              onKeyDown={mobileValidation}
+              className="border-b-2 sm:w-[50%] lg:w-[60%] outline-none"
+            />
+            {errors.mobileNumber && (
+              <div className="emailMessage text-xs  text-red-500 font-medium">
+                {errors.mobileNumber}
               </div>
             )}
           </div>
@@ -191,7 +281,7 @@ function Signuppage() {
               name="password"
               placeholder="Password"
               value={formValues.password}
-              className="border-b-2 sm:w-[50%] outline-none"
+              className="border-b-2 sm:w-[50%] lg:w-[60%] outline-none"
             />
             {errors.password && (
               <div className="emailMessage text-xs text-red-500 font-medium">
@@ -207,7 +297,10 @@ function Signuppage() {
             <button type="submit">Create Account</button>
           </div>
 
-          <div className="border-2 rounded w-[50%] mt-8  p-2 flex justify-center items-center">
+          <div
+            className="border-2 rounded w-[50%] mt-8  p-2 flex justify-center items-center"
+            onClick={handleGoogleLogin}
+          >
             <button className="flex items-center md:gap-3 gap-2">
               <img src={Googleicon} alt="Googleicon" className="w-4" />
               <p className="sm:text-base text-sm ">Sign up with Google</p>

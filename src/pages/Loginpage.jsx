@@ -1,11 +1,12 @@
 import Loginimg from "../assets/images/LoginImage.png";
 import { Link } from "react-router-dom";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { useState } from "react";
+import { onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { getAuth } from "firebase/auth";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { collection, addDoc } from "firebase/firestore";
+import ExclusiveContext from "../context/ExclusiveContext";
 import { db } from "../../firebase";
 
 const initialFormValues = {
@@ -14,6 +15,7 @@ const initialFormValues = {
 };
 
 function Loginpage() {
+  const { setUserId, userId } = useContext(ExclusiveContext);
   const [formValues, setFormValues] = useState(initialFormValues);
   const [errors, setErrors] = useState({});
   const emailValidation =
@@ -99,33 +101,41 @@ function Loginpage() {
     }
   }
 
-  const submitToFireBase = () => {
+  const submitToFireBase = async () => {
     const { email, password } = formValues;
-
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
-        Swal.fire({
-          icon: "success",
-          title: "Successfully Login",
-          showConfirmButton: false,
-          timer: 1500,
-        });
-        setFormValues(initialFormValues);
-
-        setTimeout(() => {
-          navigate("/");
-        }, 1500);
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        console.log(errorMessage);
+    try {
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userCredential.user;
+      setUserId(user.uid);
+      Swal.fire({
+        icon: "success",
+        title: "Login successful!",
+        showConfirmButton: false,
+        timer: 1500,
       });
+      navigate("/home");
+    } catch (error) {}
   };
 
+  // // Fetch and set the user ID when auth state changes
+  // useEffect(() => {
+  //   const unsubscribe = onAuthStateChanged(auth, (user) => {
+  //     if (user) {
+  //       setUserId(user.uid);
+  //     } else {
+  //       setUserId("");
+  //     }
+  //   });
+
+  //   return () => unsubscribe();
+  // }, [auth]);
+
   return (
-    <div className="py-10 flex space-x-20 ">
+    <div className="py-10 flex md:space-x-20 px-10 ">
       <div className="md:block hidden w-1/2">
         <img
           src={Loginimg}
@@ -150,7 +160,7 @@ function Loginpage() {
             name="email"
             value={formValues.email}
             placeholder="Email"
-            className="border-b-2 w-[50%] outline-none"
+            className="border-b-2 md:w-[50%] w-[90%] outline-none"
           />
           {errors.email && (
             <div className="emailMessage text-xs text-red-500 font-medium">
@@ -163,7 +173,7 @@ function Loginpage() {
             name="password"
             placeholder="Password"
             value={formValues.password}
-            className="border-b-2 w-[50%] mt-5 outline-none"
+            className="border-b-2 md:w-[50%] w-[90%] mt-5 outline-none"
           />
           {errors.password && (
             <div className="emailMessage text-xs text-red-500 font-medium">
@@ -185,7 +195,7 @@ function Loginpage() {
             </div>
           </div>
 
-          <p className="mt-8 " style={{ color: "#000000" }}>
+          <p className="mt-8 text-sm sm:text-base" style={{ color: "#000000" }}>
             Don't you have an account?
             <Link
               to="/signup"

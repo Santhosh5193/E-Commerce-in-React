@@ -10,14 +10,16 @@ import Image1 from "../assets/images/AboutCarousel1.png";
 import Services from "./../assets/icons/Services.svg";
 import Services1 from "./../assets/icons/Services1.svg";
 import Services2 from "./../assets/icons/Services2.svg";
+import { Link } from "react-router-dom";
 
 function Aboutpage() {
   return (
-    <div className="py-10 px-16">
+    <div className="md:py-10 md:px-16 px-10 py-5">
       <section className="">
         <header>
           <h2 className="">
-            Home / <span className="font-medium">About</span>
+            <Link to="/"> Home</Link> /{" "}
+            <span className="font-medium">About</span>
           </h2>
         </header>
         <div className="md:flex md:h-[80vh]">
@@ -89,12 +91,12 @@ function Aboutpage() {
           <p className="PoppinsFont text-base ">Sallers active our site</p>
         </div>
       </div>
-      <div className="mt-16 flex flex-wrap justify-evenly gap-y-4 ">
+      <div className="md:mt-16 mt-10 flex flex-wrap justify-evenly gap-y-4 ">
         <div className="md:text-left text-center justify-center md:justify-start">
           <img
             src={Image1}
             alt="Instagram-icon"
-            className="lg:w-[340px] lg:h-[430px] w-[250px] h-[300px]"
+            className="lg:w-[340px] lg:h-[430px] w-[200px] h-[230px]"
           />
           <p className="InterFont font-medium lg:text-4xl text-2xl py-2">
             Tom Crouise
@@ -118,7 +120,7 @@ function Aboutpage() {
           <img
             src={Image1}
             alt="Instagram-icon"
-            className="lg:w-[340px] lg:h-[430px] w-[250px] h-[300px]"
+            className="lg:w-[340px] lg:h-[430px] w-[200px] h-[230px]"
           />
           <p className="InterFont font-medium lg:text-4xl text-2xl py-2">
             Tom Crouise
@@ -142,7 +144,7 @@ function Aboutpage() {
           <img
             src={Image1}
             alt="Instagram-icon"
-            className="lg:w-[340px] lg:h-[430px] w-[250px] h-[300px]"
+            className="lg:w-[340px] lg:h-[430px] w-[200px] h-[230px]"
           />
           <p className="InterFont font-medium lg:text-4xl text-2xl py-2">
             Tom Crouise

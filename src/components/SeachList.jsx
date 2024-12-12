@@ -1,4 +1,4 @@
-import { ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import ExclusiveContext from "../context/ExclusiveContext";
 import { useContext, useEffect, useState } from "react";
 import Carticon from "../assets/icons/Cartlisticon1.svg";
@@ -7,6 +7,8 @@ import Viewicon from "../assets/svg/Viewicon";
 import Star from "./../assets/FlashSales/images/star.svg";
 
 import { Link, useNavigate } from "react-router-dom";
+import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import { db } from "../../firebase";
 
 function SeachList() {
   const {
@@ -134,8 +136,6 @@ function SeachList() {
   const handleCartHoverLeave = () => {
     setHoveredProductId(null);
   };
-
-  
 
   return (
     <div className=" py-10 px-14">
