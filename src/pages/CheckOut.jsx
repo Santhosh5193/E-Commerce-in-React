@@ -83,7 +83,7 @@ function CheckOut() {
     } else {
       Swal.fire({
         icon: "error",
-        title: "Please fix the errors before submitting",
+        title: "Please fill the form before submitting",
         showConfirmButton: false,
         timer: 1500,
       });
