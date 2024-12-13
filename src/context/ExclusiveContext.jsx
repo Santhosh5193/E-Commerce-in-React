@@ -110,7 +110,7 @@ export const ContextProvider = ({ children }) => {
           // console.log("No Cartlist found for this user.");
         }
 
-        // Fetch Wishlist
+        // // Fetch Wishlist
         const wishlistRef = doc(db, "Wishlist", userId);
         const wishlistDoc = await getDoc(wishlistRef);
         if (wishlistDoc.exists()) {
@@ -125,7 +125,8 @@ export const ContextProvider = ({ children }) => {
     };
 
     fetchCartStatus();
-  }, [auth.currentUser?.uid, productData, checkCartList]);
+  }, [auth.currentUser?.uid, productData]);
+  // }, [auth.currentUser?.uid, productData, checkCartList]);
 
   useEffect(() => {
     const productIds = wishlistProducts.map((i) => i.id);

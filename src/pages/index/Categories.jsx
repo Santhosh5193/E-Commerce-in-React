@@ -8,7 +8,7 @@ import ExclusiveContext from "../../context/ExclusiveContext";
 
 function Categories() {
   const [productCategeoryData, setProductCategeoryData] = useState([]);
-  const { setSeachCategory, productData, userId, setFilteredProducts } =
+  const { setSeachCategory, productData, setFilteredProducts } =
     useContext(ExclusiveContext);
   const navigate = useNavigate();
 
@@ -23,11 +23,7 @@ function Categories() {
         }));
         setProductCategeoryData(products);
       } catch (error) {
-        console.error(
-          "Error fetching product data:",
-          error.message,
-          error.code
-        );
+        console.error("Error fetching product data:", error.message);
       }
     };
     fetchProductData();

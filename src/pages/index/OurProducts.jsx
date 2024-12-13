@@ -1,47 +1,32 @@
 import rightArrow from "../../assets/FlashSales/images/Arrowright.svg";
 import leftArrow from "../../assets/FlashSales/images/Arrowleft.svg";
 import Star from "../../assets/FlashSales/images/star.svg";
-import Wishlisticon from "../../assets/svg/Wishlisticon";
 import Viewicon from "../../assets/svg/Viewicon";
 import Carticon from "../../assets/icons/Cartlisticon1.svg";
 import wishlisticon1 from "../../assets/icons/Wishlist.svg";
 import { Link } from "react-router-dom";
 import { useEffect, useState, useRef, useContext } from "react";
-import {
-  getDoc,
-  setDoc,
-  updateDoc,
-  arrayUnion,
-  doc,
-  getDocs,
-  collection,
-} from "firebase/firestore";
+import { getDoc, setDoc, updateDoc, arrayUnion, doc } from "firebase/firestore";
 import { db } from "../../../firebase";
 import ExclusiveContext from "../../context/ExclusiveContext";
-import { getAuth, onAuthStateChanged } from "@firebase/auth";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { getAuth } from "@firebase/auth";
 import Swal from "sweetalert2";
+import toast from "react-hot-toast";
 
 function OurProducts() {
   const {
     setProductView,
-    timeLeft,
     productData,
     userId,
     cartlistProducts,
     setCartlistProducts,
-    wishlistProducts,
     setWishlistProducts,
     checkCartList,
     setCheckCartList,
     wishlistProductIds,
-    setWishlistProductsIds,
-    setWishlistChagne,
   } = useContext(ExclusiveContext);
   const auth = getAuth();
   const [hoveredProductId, setHoveredProductId] = useState(null);
-  const [checkWishList, setCheckWishList] = useState(false);
 
   useEffect(() => {
     if (!userId) {
@@ -150,32 +135,21 @@ function OurProducts() {
           // Update the corresponding state
           if (isWishlist) {
             await updateDoc(listRef, { products: updatedProducts });
-            // console.log(`Product removed from ${collectionName.toLowerCase()}`);
             toast.success(
               `Product removed from ${collectionName.toLowerCase()}`
             );
-            setWishlistProducts((prev) =>
-              prev.filter((id) => id !== productId)
-            );
-            setWishlistProductsIds((prev) =>
-              prev.filter((id) => id !== productId)
-            );
+            setWishlistProducts(updatedProducts);
           }
         } else {
           await updateDoc(listRef, {
             products: arrayUnion({ productId, ...product }),
           });
-          // console.log(`Product added to ${collectionName.toLowerCase()}`);
           toast.success(`Product added to ${collectionName.toLowerCase()}`);
 
           if (isWishlist) {
-            setWishlistProducts((prev) => [...prev, productId]);
-            // setWishlistProductsIds((prev) => [...prev, productId]);
-            setWishlistProductsIds((prev) =>
-              prev.filter((id) => id !== productId)
-            );
+            setWishlistProducts((prev) => [...prev, product]);
           } else {
-            setCartlistProducts((prev) => [...prev, productId]);
+            setCartlistProducts((prev) => [...prev, product]);
             setCheckCartList(true);
           }
         }
@@ -342,7 +316,6 @@ function OurProducts() {
           </button>
         </Link>
       </div>
-      <ToastContainer autoClose={2000} />
     </div>
   );
 }

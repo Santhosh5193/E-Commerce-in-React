@@ -21,6 +21,7 @@ import ScrollingTop from "./components/ScrollingTop";
 import ManageAccount from "./pages/MyProfile/ManageAccount";
 import Profileinfo from "./pages/MyProfile/Profileinfo";
 import SeachList from "./components/SeachList";
+import { Toaster } from "react-hot-toast";
 
 function App() {
   return (
@@ -52,6 +53,7 @@ function App() {
         {/* <Route path="/contact" element={<Imageupload />} /> */}
       </Routes>
       <Footer />
+      <Toaster position="top-right" reverseOrder={false} />
     </div>
   );
 }

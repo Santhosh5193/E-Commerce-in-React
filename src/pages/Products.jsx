@@ -1,28 +1,16 @@
 import { useContext, useEffect, useState } from "react";
 import Star from "./../assets/FlashSales/images/star.svg";
-import {
-  arrayUnion,
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  setDoc,
-  updateDoc,
-} from "firebase/firestore";
+import { arrayUnion, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebase";
-import Wishlisticon from "../assets/svg/Wishlisticon";
 import Carticon from "../assets/icons/Cartlisticon1.svg";
-import deleteicon from "../assets/icons/Deleteicon.svg";
 import Viewicon from "../assets/svg/Viewicon";
 import { Link } from "react-router-dom";
 import ExclusiveContext from "../context/ExclusiveContext";
 import wishlisticon1 from "../assets/icons/Wishlist.svg";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import toast from "react-hot-toast";
 
 function Products() {
   const {
-    wishlistProducts,
     setWishlistProducts,
     productData,
     userId,
@@ -32,10 +20,8 @@ function Products() {
     checkCartList,
     setCheckCartList,
     wishlistProductIds,
-    setWishlistProductsIds,
   } = useContext(ExclusiveContext);
   const [hoveredProductId, setHoveredProductId] = useState(null);
-  const [addWishlist, setAddwishlist] = useState(false);
 
   //Product item to view
   const handleToViewlist = (id) => {
@@ -46,6 +32,23 @@ function Products() {
   const handleAddToList = async (productId, isWishlist = false) => {
     if (!userId) {
       console.log("User not logged in");
+      Swal.fire({
+        title: "User not logged in",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Login",
+        customClass: {
+          confirmButton: "custom-login-button",
+          cancelButton: "custom-login-button",
+        },
+      }).then((result) => {
+        if (result.isConfirmed) {
+          window.location.href = "/login";
+        }
+      });
       return;
     }
 
@@ -79,13 +82,7 @@ function Products() {
             toast.success(
               `Product removed from ${collectionName.toLowerCase()}`
             );
-
-            setWishlistProducts((prev) =>
-              prev.filter((id) => id !== productId)
-            );
-            setWishlistProductsIds((prev) =>
-              prev.filter((id) => id !== productId)
-            );
+            setWishlistProducts(updatedProducts);
           }
         } else {
           await updateDoc(listRef, {
@@ -94,10 +91,9 @@ function Products() {
           toast.success(`Product added to ${collectionName.toLowerCase()}`);
 
           if (isWishlist) {
-            setWishlistProducts((prev) => [...prev, productId]);
-            setWishlistProductsIds((prev) => [...prev, productId]);
+            setWishlistProducts((prev) => [...prev, product]);
           } else {
-            setCartlistProducts((prev) => [...prev, productId]);
+            setCartlistProducts((prev) => [...prev, product]);
             setCheckCartList(true);
           }
         }
@@ -112,8 +108,6 @@ function Products() {
         // Update the corresponding state
         if (isWishlist) {
           setWishlistProducts((prev) => [...prev, productId]);
-          setWishlistProductsIds((prev) => [...prev, productId]);
-
         } else {
           setCartlistProducts((prev) => [...prev, productId]);
           setCheckCartList(true);
@@ -147,14 +141,6 @@ function Products() {
   const handleCartHoverLeave = () => {
     setHoveredProductId(null);
   };
-  // useEffect(() => {
-  //   const productIds = wishlistProducts.map((i) => i.id);
-  //   setWishlistProductsIds(productIds);
-  //   const id = wishlistProducts.some(
-  //     (wishlistProducts) => wishlistProducts.id !== productData
-  //   );
-  //   // console.log(id);
-  // }, [wishlistProducts]);
 
   return (
     <div className=" py-10 px-14 ">
@@ -253,7 +239,6 @@ function Products() {
           </div>
         ))}
       </div>
-      <ToastContainer autoClose={2000} />;
     </div>
   );
 }

@@ -150,7 +150,6 @@ function Signuppage() {
         password
       );
       const user = userCredential.user;
-      // const loginTime = new Date();
 
       // Save additional user information in Firestore
       await setDoc(doc(db, "users", user.uid), {
@@ -218,7 +217,7 @@ function Signuppage() {
   };
 
   return (
-    <div className="py-10 flex space-x-20 ">
+    <div className="py-10 flex md:space-x-20 px-10 ">
       <div className="md:block hidden w-1/2">
         <img
           src={Loginimg}
@@ -301,7 +300,7 @@ function Signuppage() {
           </div>
 
           <div
-            className="rounded w-[50%] py-2 mt-5 text-center"
+            className="rounded w-[100%] md:w-[50%] py-2 mt-5 text-center"
             style={{ background: "#DB4444", color: "white" }}
           >
             <button type="submit">Create Account</button>
@@ -309,7 +308,7 @@ function Signuppage() {
         </form>
 
         <div
-          className="border-2 rounded w-[50%] mt-8  p-2 flex justify-center items-center"
+          className="border-2 rounded  w-[100%] md:w-[50%] mt-8  p-2 flex justify-center items-center"
           onClick={handleGoogleLogin}
         >
           <button className="flex items-center md:gap-3 gap-2">
@@ -317,7 +316,10 @@ function Signuppage() {
             <p className="sm:text-base text-sm ">Sign up with Google</p>
           </button>
         </div>
-        <p className="mt-8 text-center w-[50%]" style={{ color: "#000000" }}>
+        <p
+          className="mt-8 text-center w-[100%] md:w-[50%]"
+          style={{ color: "#000000" }}
+        >
           Already have account?
           <Link
             to="/login"

@@ -1,13 +1,11 @@
 import Loginimg from "../assets/images/LoginImage.png";
 import { Link } from "react-router-dom";
-import { onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
-import { useCallback, useContext, useEffect, useState } from "react";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { useContext, useState } from "react";
 import { getAuth } from "firebase/auth";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
-import { collection, addDoc } from "firebase/firestore";
 import ExclusiveContext from "../context/ExclusiveContext";
-import { db } from "../../firebase";
 
 const initialFormValues = {
   email: "",
@@ -23,7 +21,6 @@ function Loginpage() {
   const upperCase = /[A-Z]/;
   const auth = getAuth();
   const navigate = useNavigate();
-  const [imageUrl, setImageUrl] = useState("");
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
@@ -120,19 +117,6 @@ function Loginpage() {
       navigate("/home");
     } catch (error) {}
   };
-
-  // // Fetch and set the user ID when auth state changes
-  // useEffect(() => {
-  //   const unsubscribe = onAuthStateChanged(auth, (user) => {
-  //     if (user) {
-  //       setUserId(user.uid);
-  //     } else {
-  //       setUserId("");
-  //     }
-  //   });
-
-  //   return () => unsubscribe();
-  // }, [auth]);
 
   return (
     <div className="py-10 flex md:space-x-20 px-10 ">
