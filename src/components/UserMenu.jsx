@@ -1,7 +1,7 @@
 import { useContext, useRef, useState } from "react";
 import ExclusiveContext from "../context/ExclusiveContext";
 import { FaRegUser } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import OustsideClick from "./OustsideClick";
 import user from "../assets/icons/User.svg";
 import mallbag from "../assets/icons/Mallbag.svg";
@@ -9,18 +9,14 @@ import cancel from "../assets/icons/Cancel.svg";
 import logout from "../assets/icons/Logout.svg";
 import review from "../assets/icons/Reviews.svg";
 import Swal from "sweetalert2";
+import { signOut } from "@firebase/auth";
+import { auth } from "../../firebase";
 
 function UserMenu(setIsMenuOpen) {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-  const {
-    userId,
-    setUserId,
-    wishlistProductIds,
-    cartlistProducts,
-    productData,
-    setFilteredProducts,
-  } = useContext(ExclusiveContext);
+  const { userId, setUserId } = useContext(ExclusiveContext);
   const wrapperRef = useRef(null);
+  const navigate = useNavigate();
 
   const userMenu = () => {
     setIsUserMenuOpen(!isUserMenuOpen);

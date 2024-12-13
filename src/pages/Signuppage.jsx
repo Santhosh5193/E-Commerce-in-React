@@ -11,6 +11,7 @@ import { auth, db, googleProvider } from "../../firebase";
 import Swal from "sweetalert2";
 import { setDoc, doc } from "firebase/firestore";
 import ExclusiveContext from "../context/ExclusiveContext";
+import moment from "moment";
 
 const initialFormValues = {
   fname: "",
@@ -190,18 +191,22 @@ function Signuppage() {
     try {
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
-      console.log("Google login successful, User:", user);
-
-      const loginTime = new Date();
 
       await setDoc(doc(db, "users", user.uid), {
-        name: user.displayName || "Anonymous",
+        name: user.displayName,
         email: user.email,
         uid: user.uid,
         loginTime: moment().format("DD-MM-YYYY HH:MM:SS"),
       });
 
       setUserId(user.uid);
+      Swal.fire({
+        icon: "success",
+        title: "Google login successful",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+      navigate("/");
     } catch (error) {
       Swal.fire({
         icon: "error",

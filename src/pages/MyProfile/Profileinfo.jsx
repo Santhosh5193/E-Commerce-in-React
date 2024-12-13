@@ -45,10 +45,10 @@ function Profileinfo() {
       <div div className="flex space-x-10 pb-5">
         <input
           type="text"
-          placeholder={userlist.name}
+          placeholder={userlist?.name}
           className="border-2 sm:w-[80%] lg:w-[50%] px-3 w-full py-1 ssm:py-2 sm:text-xl"
         />
-        {userlist.lastname && (
+        {userlist?.lastname && (
           <input
             type="text"
             placeholder="Last Name"
@@ -89,7 +89,7 @@ function Profileinfo() {
       <input
         type="email"
         name=""
-        placeholder={userlist.email}
+        placeholder={userlist?.email}
         className="border-2 sm:w-[80%] lg:w-[50%] px-3 w-full py-1 ssm:py-2 sm:text-xl"
       />
 
@@ -97,7 +97,7 @@ function Profileinfo() {
       <input
         type="number"
         name=""
-        placeholder={userlist.mobileNumber}
+        placeholder={userlist?.mobileNumber}
         className="border-2 w-full sm:w-[80%] lg:w-[50%]  py-1 ssm:py-2 sm:text-xl px-3"
       />
     </>
