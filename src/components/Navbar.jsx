@@ -205,13 +205,13 @@ function Navbar() {
               )}
             </div>
             {/* <UserMenu setIsMenuOpen={isMenuOpen} /> */}
-            {/* <UserMenu
+            <UserMenu
               onClick={() => navigate("/myaccount/profileInformation")}
-            /> */}
-            <FaRegUser
+            />
+            {/* <FaRegUser
               className="w-6 h-6 cursor-pointer"
               onClick={userMenuIcon}
-            />
+            /> */}
           </li>
         </ul>
       </div>

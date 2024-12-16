@@ -5,8 +5,10 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
 } from "firebase/auth";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { auth, db, googleProvider } from "../../firebase";
 import Swal from "sweetalert2";
 import { setDoc, doc } from "firebase/firestore";
@@ -190,14 +192,12 @@ function Signuppage() {
     try {
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
-
       await setDoc(doc(db, "users", user.uid), {
         name: user.displayName,
         email: user.email,
         uid: user.uid,
         loginTime: moment().format("DD-MM-YYYY HH:MM:SS"),
       });
-
       setUserId(user.uid);
       Swal.fire({
         icon: "success",
@@ -210,9 +210,10 @@ function Signuppage() {
       Swal.fire({
         icon: "error",
         title: "Google Sign-In Failed",
-        text: err.message,
+        text: error.message,
         showConfirmButton: true,
       });
+      console.log(error.message);
     }
   };
 
@@ -317,7 +318,7 @@ function Signuppage() {
           </button>
         </div>
         <p
-          className="mt-8 text-center w-[100%] md:w-[50%]"
+          className="mt-8 text-center w-[100%] md:w-[50%] text-nowrap"
           style={{ color: "#000000" }}
         >
           Already have account?

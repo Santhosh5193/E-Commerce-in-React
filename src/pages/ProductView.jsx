@@ -16,6 +16,7 @@ import { auth, db } from "../../firebase";
 import { useContext } from "react";
 import ExclusiveContext from "../context/ExclusiveContext";
 import wishlisticon1 from "../assets/icons/Wishlist.svg";
+import Carticon from "../assets/icons/Cartlisticon1.svg";
 import toast from "react-hot-toast";
 import Swal from "sweetalert2";
 
@@ -26,6 +27,9 @@ function ProductView() {
     wishlistProductIds,
     setCartlistProducts,
     setWishlistProducts,
+    cartlistProducts,
+    checkCartList,
+    userId,
   } = useContext(ExclusiveContext);
   const a = ["XS", "S", "M", "L", "XL"];
   const [productData, setProductData] = useState([]);
@@ -74,8 +78,7 @@ function ProductView() {
   };
 
   // Add or Remove Items from Wishlist or Cart
-  const handleAddToList = async (productId) => {
-    const userId = auth.currentUser?.uid;
+  const handleAddToList = async (productId, isWishlist = false) => {
     if (!userId) {
       console.log("User not logged in");
       Swal.fire({
@@ -99,11 +102,14 @@ function ProductView() {
     }
 
     const product = productData.find((item) => item.id === productId);
+
     if (!product) {
       console.error("Product not found");
       return;
     }
-    const listRef = doc(db, "Cartlist", userId);
+
+    const collectionName = isWishlist ? "Wishlist" : "Cartlist";
+    const listRef = doc(db, collectionName, userId);
 
     try {
       const listDoc = await getDoc(listRef);
@@ -115,28 +121,53 @@ function ProductView() {
         );
 
         if (isProductInList) {
+          // Remove the product if it's already in the list
           const updatedProducts = existingProducts.filter(
             (item) => item.productId !== productId
           );
-          await updateDoc(listRef, { products: updatedProducts });
-          toast.success(`Product removed from Cartlist`);
-          setWishlistProducts(updatedProducts);
+
+          // Update the corresponding state
+          if (isWishlist) {
+            await updateDoc(listRef, { products: updatedProducts });
+            toast.success(
+              `Product removed from ${collectionName.toLowerCase()}`
+            );
+            setWishlistProducts(updatedProducts);
+          }
         } else {
           await updateDoc(listRef, {
             products: arrayUnion({ productId, ...product }),
           });
-          toast.success(`Product added to Cartlist`);
-          setWishlistProducts((prev) => [...prev, product]);
+          toast.success(`Product added to ${collectionName.toLowerCase()}`);
+
+          if (isWishlist) {
+            setWishlistProducts((prev) => [...prev, product]);
+          } else {
+            setCartlistProducts((prev) => [...prev, product]);
+            setCheckCartList(true);
+          }
         }
       } else {
         await setDoc(listRef, {
           products: [{ productId, ...product }],
         });
-        toast.success(`New Cartlist created and product added`);
-        setWishlistProducts((prev) => [...prev, productId]);
+        toast.success(
+          `New ${collectionName.toLowerCase()} created and product added`
+        );
+
+        // Update the corresponding state
+        if (isWishlist) {
+          setWishlistProducts((prev) => [...prev, productId]);
+        } else {
+          setCartlistProducts((prev) => [...prev, productId]);
+          setCheckCartList(true);
+        }
       }
     } catch (error) {
-      console.error(`Error updating cartlist`, error.message);
+      console.error(
+        `Error updating ${collectionName.toLowerCase()}:`,
+        error.message
+      );
     }
   };
 
@@ -172,7 +203,7 @@ function ProductView() {
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 24 24"
                         className="wishlist-icon w-6 h-6"
-                        onClick={() => handleAddToList(item.id)}
+                        onClick={() => handleAddToList(item.id, true)}
                       >
                         <path
                           d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
@@ -183,7 +214,7 @@ function ProductView() {
                       <img
                         src={wishlisticon1}
                         alt="wishlisticon1"
-                        onClick={() => handleAddToList(item.id)}
+                        onClick={() => handleAddToList(item.id, true)}
                       />
                     )}
                   </div>
@@ -227,31 +258,67 @@ function ProductView() {
                   <p className="PoppinsFont text-gray-300 sm:pr-4 pr-2 border-r-2 text-sm">
                     (150 Reviews)
                   </p>
-                  <p className="PoppinsFont" style={{ color: "#00FF66" }}>
-                    In Stock
-                  </p>
+
+                  {/* In Stock */}
+                  {item.stockLeft > 0 ? (
+                    <p className="PoppinsFont text-green-500 font-semibold">
+                      In stock
+                    </p>
+                  ) : (
+                    <p className="PoppinsFont text-red-500 font-semibold">
+                      Out of Stock
+                    </p>
+                  )}
                 </div>
-                <p className="InterFont text-[24px] mb-2">
-                  ₹{item.originalPrice}
-                </p>
+                <div className="flex gap-5 ">
+                  <p className="InterFont text-[24px] mb-2 line-through">
+                    ₹{item.originalPrice}
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <h2 className="InterFont text-[24px] mb-2 text-red-500">
+                      ₹{item.price}
+                    </h2>
+                    <p className="InterFont text-base mb-2 text-red-500">
+                      ({item.offer})
+                    </p>
+                  </div>
+                </div>
                 <p className="PoppinsFont pb-4  border-b-2 text-sm sm:text-base">
                   {item.description}
                 </p>
                 <div className="mt-5 flex items-center space-x-8">
-                  <div className="">
+                  {/* <div className="">
                     <Quantity />
-                  </div>
-                  <div
-                    className="rounded w-[25%] py-[2px] text-center "
+                  </div> */}
+                  {/* <div
+                    className="rounded py-[2px] px-5 text-center text-nowrap "
                     style={{ background: "#DB4444", color: "white" }}
                   >
                     <button type="submit">
-                      <Link to="/cart/checkout">Buy Now</Link>
+                      <Link to="/cart/checkout">Add to cart</Link>
+                    </button>
+                  </div> */}
+
+                  <div className="">
+                    <button
+                      className={`w-full flex justify-center px-3 rounded-sm py-2  bg-black text-white transition-all duration-300 `}
+                    >
+                      <img src={Carticon} alt="Carticon" />
+                      {checkCartList ? (
+                        <Link to="/cart">
+                          <p>Go to Cart</p>
+                        </Link>
+                      ) : (
+                        <p onClick={() => handleAddToList(item.id, false)}>
+                          Add to Cart
+                        </p>
+                      )}
                     </button>
                   </div>
-                  <div className="w-7 h-7 border-2 rounded-md items-center flex justify-center">
+                  {/* </div> */}
+                  {/* <div className="w-7 h-7 border-2 rounded-md items-center flex justify-center">
                     <img src={Wishlisticon} alt="" className="w-4 " />
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>

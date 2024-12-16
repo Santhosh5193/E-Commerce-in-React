@@ -6,6 +6,7 @@ import mailsend from "../assets/icons/emailsend.svg";
 import QrCode from "../assets/icons/Qrcode.svg";
 import Appstore from "../assets/icons/AppStore.svg";
 import Googlestore from "../assets/icons/GooglePlay.svg";
+import { Link } from "react-router-dom";
 
 function Footer() {
   return (
@@ -45,10 +46,18 @@ function Footer() {
       <div className="third w-full ssm:w-1/2 sm:w-1/2 md:w-1/3 lg:w-1/5 mb-8">
         <ul className="text-light-white">
           <li className="PoppinsFont font-semibold">Account</li>
-          <li className="fooText">My Account</li>
-          <li className="fooText">Login / Register</li>
-          <li className="fooText">Cart</li>
-          <li className="fooText">Wishlist</li>
+          <li className="fooText">
+            <Link to="/myaccount/profileInformation">My Account</Link>
+          </li>
+          <li className="fooText">
+            <Link to="/signup">Login / Register</Link>
+          </li>
+          <li className="fooText">
+            <Link to="/cart">Cart</Link>
+          </li>
+          <li className="fooText">
+            <Link to="/wishlist">Wishlist</Link>
+          </li>
           <li className="fooText">Shop</li>
         </ul>
       </div>
@@ -58,7 +67,9 @@ function Footer() {
           <li className="fooText">Privacy Policy</li>
           <li className="fooText">Trems Of Use</li>
           <li className="fooText">FAQ</li>
-          <li className="fooText">Contact</li>
+          <li className="fooText">
+            <Link to="/contact">Contact</Link>
+          </li>
         </ul>
       </div>
       <div className="last w-full ssm:w-1/2 sm:w-1/3 md:w-1/3 lg:w-1/5 mb-8">
