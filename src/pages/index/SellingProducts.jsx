@@ -183,7 +183,7 @@ function SellingProducts() {
     <div className="border-b-2 py-8">
       <div className="head flex gap-3 items-center pb-5">
         <div className="sm:h-10 h-7 w-2 sm:w-5 bg-secondary rounded-md"></div>
-        <h3 className="text-red-600 PoppinsFont font-semibold">This Month</h3>
+        <h2 className="text-red-600 PoppinsFont font-semibold">This Month</h2>
       </div>
       <div className="flex justify-between">
         <div className="crad-head flex sm: pb-5 flex-col sm:flex-row  lg:gap-x-[89px] md:gap-x-[50px] gap-x-[15px] space-y-2">
@@ -260,7 +260,7 @@ function SellingProducts() {
                       {product.productName}
                     </h2>
                     <div className="rate flex gap-3">
-                      <h2 className="text-red-500">₹{product.price}</h2>
+                      <h2 className="text-red-700">₹{product.price}</h2>
                       <h2 className="line-through">₹{product.originalPrice}</h2>
                       <div className="absolute  bg-white top-3 right-3 rounded-full">
                         <div className="w-9 h-9 flex justify-center items-center cursor-pointer text-red-500 ">
@@ -291,14 +291,17 @@ function SellingProducts() {
                           id={product.id}
                           onClick={() => handleToViewlist(product.id)}
                         >
-                          <Link to="/productview">
+                          <Link
+                            to="/productview"
+                            aria-label="View product details"
+                          >
                             <Viewicon />
                           </Link>
                         </div>
                       </div>
                       <div className="absolute bg-secondary text-white top-2 left-2 rounded-md px-3 py-1">
                         <div className="flex justify-center items-center ">
-                          <p className="tracking-wider text-sm">
+                          <p className="tracking-wider text-sm drop-shadow-md">
                             {product.offer}
                           </p>
                         </div>

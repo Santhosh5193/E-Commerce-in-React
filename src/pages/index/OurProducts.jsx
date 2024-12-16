@@ -195,7 +195,7 @@ function OurProducts() {
             onClick={scrollLeft}
           >
             <div className="sm:w-8 sm:h-8 w-5 h-5 flex justify-center items-center">
-              <img src={leftArrow} alt="" className="w-5 sm:w-full" />
+              <img src={leftArrow} alt="leftArrow" className="w-5 sm:w-full" />
             </div>
           </div>
           <div
@@ -203,7 +203,11 @@ function OurProducts() {
             onClick={scrollRight}
           >
             <div className="sm:w-8 sm:h-8 w-5 h-5 flex justify-center items-center">
-              <img src={rightArrow} alt="" className="w-5 sm:w-full" />
+              <img
+                src={rightArrow}
+                alt="rightArrow"
+                className="w-5 sm:w-full"
+              />
             </div>
           </div>
         </div>
@@ -254,7 +258,7 @@ function OurProducts() {
                       {product.productName}
                     </h2>
                     <div className="rate flex gap-3">
-                      <h2 className="text-red-500">₹{product.price}</h2>
+                      <h2 className="text-red-700">₹{product.price}</h2>
                       <h2 className="line-through">₹{product.originalPrice}</h2>
                       <div className="absolute  bg-white top-3 right-3 rounded-full">
                         <div className="w-9 h-9 flex justify-center items-center cursor-pointer text-red-500 ">
@@ -273,7 +277,7 @@ function OurProducts() {
                           ) : (
                             <img
                               src={wishlisticon1}
-                              alt=""
+                              alt={"wishlisticons"}
                               onClick={() => handleAddToList(product.id, true)}
                             />
                           )}
@@ -285,22 +289,25 @@ function OurProducts() {
                           id={product.id}
                           onClick={() => handleToViewlist(product.id)}
                         >
-                          <Link to="/productview">
+                          <Link
+                            to="/productview"
+                            aria-label="View product details"
+                          >
                             <Viewicon />
                           </Link>
                         </div>
                       </div>
                       <div className="absolute bg-secondary text-white top-2 left-2 rounded-md px-3 py-1">
                         <div className="flex justify-center items-center ">
-                          <p className="tracking-wider text-sm">
+                          <p className="tracking-wider text-sm drop-shadow-md">
                             {product.offer}
                           </p>
                         </div>
                       </div>
                     </div>
                     <div className="star flex gap-2 py-1">
-                      {product?.ratings.map((star) => (
-                        <img src={Star} key={star} />
+                      {product?.ratings.map((star, index) => (
+                        <img src={Star} key={star} alt={index} />
                       ))}
                     </div>
                   </div>

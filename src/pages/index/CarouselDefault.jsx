@@ -26,36 +26,36 @@ function CarouselDefault() {
       />
 
       <div className="flex gap-3 absolute sm:bottom-5 bottom-2 right-[45%] ">
-        <button
+        <span
           onClick={() => setCurrentIndex(0)}
           className={`${
             currentIndex === 0 ? "carouselButtonFill" : "carouselbutton"
-          }`}
-        ></button>
-        <button
+          }  h-2.5 w-2.5 flex justify-center items-center`}
+        ></span>
+        <span
           onClick={() => setCurrentIndex(1)}
           className={`${
             currentIndex === 1 ? "carouselButtonFill" : "carouselbutton"
-          }`}
-        ></button>
-        <button
+          } h-2.5 w-2.5 flex justify-center items-center`}
+        ></span>
+        <span
           onClick={() => setCurrentIndex(2)}
           className={`${
             currentIndex === 2 ? "carouselButtonFill" : "carouselbutton"
-          }`}
-        ></button>
-        <button
+          } h-2.5 w-2.5 flex justify-center items-center`}
+        ></span>
+        <span
           onClick={() => setCurrentIndex(3)}
           className={`${
             currentIndex === 3 ? "carouselButtonFill" : "carouselbutton"
-          }`}
-        ></button>
-        <button
+          } h-2.5 w-2.5 flex justify-center items-center`}
+        ></span>
+        <span
           onClick={() => setCurrentIndex(4)}
           className={`${
             currentIndex === 4 ? "carouselButtonFill" : "carouselbutton"
-          }`}
-        ></button>
+          } h-2.5 w-2.5 flex justify-center items-center`}
+        ></span>
       </div>
     </div>
   );

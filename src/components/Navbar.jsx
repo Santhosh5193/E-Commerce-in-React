@@ -143,7 +143,11 @@ function Navbar() {
           </div>
 
           <div className="lg:hidden">
-            <button className="menu-button" onClick={toggleMenu}>
+            <button
+              className="menu-button"
+              onClick={toggleMenu}
+              aria-label="menu-buuton"
+            >
               <GiHamburgerMenu className="w-5 h-5" />
             </button>
           </div>

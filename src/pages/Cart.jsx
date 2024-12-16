@@ -86,10 +86,10 @@ function Cart() {
   };
 
   return (
-    <section className="py-10 md:px-14">
+    <section className="py-7 md:px-14">
       <div className="">
         <header>
-          <h2 className="PoppinsFont md:mb-10 mb-5 px-5">
+          <h2 className="PoppinsFont md:mb-10 mb-10 px-5">
             <Link to="/"> Home</Link> /{" "}
             <span className="font-medium">Cart</span>
           </h2>
@@ -185,12 +185,12 @@ function Cart() {
           </div>
         ) : (
           <div
-            className="flex flex-col justify-center items-center h-[50vh]"
+            className="flex flex-col justify-center items-center "
             style={{ boxShadow: "rgba(0, 0, 0, 0.2) 0px 1px 2px" }}
           >
             <img src={EmptyCart} alt="" className="h-[162px] w-[221px]" />
-            <p className="text-lg pt-12">Your cart is MT!</p>
-            <p className="pt-5 text-gray-500">
+            <p className="text-lg md:pt-12 pt-5">Your cart is MT!</p>
+            <p className="py-5 text-gray-500 px-5 md:px-0">
               Explore our wide selection and find something you like
             </p>
           </div>

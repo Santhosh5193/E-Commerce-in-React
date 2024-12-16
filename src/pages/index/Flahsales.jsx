@@ -301,7 +301,7 @@ function Flahsales() {
                       {product.productName}
                     </h2>
                     <div className="rate flex gap-3">
-                      <h2 className="text-red-500">₹{product.price}</h2>
+                      <h2 className="text-red-700">₹{product.price}</h2>
                       <h2 className="line-through">₹{product.originalPrice}</h2>
                       <div className="absolute  bg-white top-3 right-3 rounded-full">
                         <div className="w-9 h-9 flex justify-center items-center cursor-pointer text-red-500 ">
@@ -332,14 +332,17 @@ function Flahsales() {
                           id={product.id}
                           onClick={() => handleToViewlist(product.id)}
                         >
-                          <Link to="/productview">
+                          <Link
+                            to="/productview"
+                            aria-label="View product details"
+                          >
                             <Viewicon />
                           </Link>
                         </div>
                       </div>
                       <div className="absolute bg-secondary text-white top-2 left-2 rounded-md px-3 py-1">
                         <div className="flex justify-center items-center ">
-                          <p className="tracking-wider text-sm">
+                          <p className="tracking-wider text-sm drop-shadow-md">
                             {product.offer}
                           </p>
                         </div>
