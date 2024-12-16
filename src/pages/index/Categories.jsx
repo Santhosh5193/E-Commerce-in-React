@@ -97,7 +97,7 @@ function Categories() {
           </div>
         </div>
       </div>
-      <div
+      {/* <div
         className="flex w-full space-x-7 flex-nowrap overflow-x-auto overflow-y-hidden "
         ref={cardsRef}
         style={{ scrollbarWidth: "none" }}
@@ -119,6 +119,28 @@ function Categories() {
             </h1>
           </div>
         ))}
+      </div> */}
+      <div className="overflow-x-auto overflow-y-hidden" ref={cardsRef}>
+        <div
+          className="flex w-full space-x-7 flex-nowrap"
+          style={{ scrollbarWidth: "none" }}
+        >
+          {productCategeoryData.map((items) => (
+            <div
+              key={items.id}
+              className="md:h-36 md:w-48 sm:w-40 sm:h-32 w-36 h-32 border-2 rounded flex flex-col justify-center items-center cursor-pointer"
+            >
+              <img
+                src={items.image}
+                alt={items.name}
+                className="md:h-16 h-10 sm:w-16 object-contain"
+              />
+              <h1 className="text-center sm:text-lg text-base mt-2">
+                {items.name}
+              </h1>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
