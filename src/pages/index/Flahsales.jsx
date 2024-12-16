@@ -340,7 +340,7 @@ function Flahsales() {
                           </Link>
                         </div>
                       </div>
-                      <div className="absolute bg-secondary text-white top-2 left-2 rounded-md px-3 py-1">
+                      <div className="absolute bg-secondary text-gray-100 top-2 left-2 rounded-md px-3 py-1">
                         <div className="flex justify-center items-center ">
                           <p className="tracking-wider text-sm drop-shadow-md">
                             {product.offer}

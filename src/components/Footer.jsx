@@ -86,16 +86,35 @@ function Footer() {
         </div>
         <ul className="flex gap-5 mt-4">
           <li>
-            <img src={fbicon} alt="QrCode" />
+            <a href="https://facebook.com" aria-label="Visit our Facebook page">
+              <img src={fbicon} alt="Facebook icon" />
+            </a>
+            {/* <img src={fbicon} alt="QrCode" /> */}
           </li>
           <li>
-            <img src={insta} alt="insta" />
+            <a
+              href="https://instagram.com"
+              aria-label="Visit our Instagram profile"
+            >
+              <img src={insta} alt="Instagram icon" />
+            </a>
+            {/* <img src={insta} alt="insta" /> */}
           </li>
           <li>
-            <img src={twitter} alt="twitter" />
+            <a
+              href="https://twitter.com"
+              aria-label="Visit our Twitter profile"
+            >
+              <img src={twitter} alt="Twitter icon" />
+            </a>
           </li>
           <li>
-            <img src={linkedin} alt="linkedin" />
+            <a
+              href="https://linkedin.com"
+              aria-label="Visit our LinkedIn profile"
+            >
+              <img src={linkedin} alt="LinkedIn icon" />
+            </a>
           </li>
         </ul>
       </div>
