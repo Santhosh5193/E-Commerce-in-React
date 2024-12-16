@@ -350,7 +350,13 @@ function Flahsales() {
                     </div>
                     <div className="star flex gap-2 py-1">
                       {product?.ratings.map((star) => (
-                        <img src={Star} key={star} alt="star" />
+                        <img
+                          src={Star}
+                          key={star}
+                          alt="star"
+                          width="17"
+                          height="17"
+                        />
                       ))}
                     </div>
                   </div>

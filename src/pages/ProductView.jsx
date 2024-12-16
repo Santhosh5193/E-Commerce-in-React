@@ -251,7 +251,9 @@ function ProductView() {
                         key={index}
                         src={Star}
                         alt=""
-                        className="sm:w-[20px] sm:h-[20px] "
+                        // className="sm:w-[20px] sm:h-[20px]"
+                        width="17"
+                        height="17"
                       />
                     ))}
                   </div>

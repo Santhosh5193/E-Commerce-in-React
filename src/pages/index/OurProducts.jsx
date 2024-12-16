@@ -307,7 +307,13 @@ function OurProducts() {
                     </div>
                     <div className="star flex gap-2 py-1">
                       {product?.ratings.map((star, index) => (
-                        <img src={Star} key={star} alt={index} />
+                        <img
+                          src={Star}
+                          key={star}
+                          alt={index}
+                          width="17"
+                          height="17"
+                        />
                       ))}
                     </div>
                   </div>
