@@ -4,18 +4,17 @@ import { useState, useRef, useContext, useEffect } from "react";
 import Wishlisticon from "../assets/svg/Wishlisticon";
 import Carticon from "../assets/svg/Carticon";
 import { GiHamburgerMenu } from "react-icons/gi";
-import { FaRegUser } from "react-icons/fa";
 import ExclusiveContext from "../context/ExclusiveContext";
-import { getAuth, signOut } from "firebase/auth";
+import { getAuth } from "firebase/auth";
 import OustsideClick from "./OustsideClick";
 import UserMenu from "./UserMenu";
+import { FaRegUser } from "react-icons/fa";
 
 function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const {
     userId,
-    setUserId,
     wishlistProductIds,
     cartlistProducts,
     productData,
@@ -208,14 +207,13 @@ function Navbar() {
                 </span>
               )}
             </div>
-            {/* <UserMenu setIsMenuOpen={isMenuOpen} /> */}
-            <UserMenu
+            {/* <UserMenu
               onClick={() => navigate("/myaccount/profileInformation")}
-            />
-            {/* <FaRegUser
+            /> */}
+            <FaRegUser
               className="w-6 h-6 cursor-pointer"
               onClick={userMenuIcon}
-            /> */}
+            />
           </li>
         </ul>
       </div>

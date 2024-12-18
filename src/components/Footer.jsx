@@ -89,7 +89,6 @@ function Footer() {
             <a href="https://facebook.com" aria-label="Visit our Facebook page">
               <img src={fbicon} alt="Facebook icon" />
             </a>
-            {/* <img src={fbicon} alt="QrCode" /> */}
           </li>
           <li>
             <a
@@ -98,7 +97,6 @@ function Footer() {
             >
               <img src={insta} alt="Instagram icon" />
             </a>
-            {/* <img src={insta} alt="insta" /> */}
           </li>
           <li>
             <a

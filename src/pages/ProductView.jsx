@@ -1,37 +1,21 @@
 import Star from "../assets/FlashSales/images/star.svg";
-import Quantity from "../components/Quantity";
-import { Link, useParams } from "react-router-dom";
-import Wishlisticon from "../assets/icons/Wishlist.svg";
+import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import {
-  arrayUnion,
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  setDoc,
-  updateDoc,
-} from "firebase/firestore";
-import { auth, db } from "../../firebase";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../../firebase";
 import { useContext } from "react";
 import ExclusiveContext from "../context/ExclusiveContext";
 import wishlisticon1 from "../assets/icons/Wishlist.svg";
 import Carticon from "../assets/icons/Cartlisticon1.svg";
-import toast from "react-hot-toast";
-import Swal from "sweetalert2";
 
 function ProductView() {
   const {
     productView,
     setProductView,
     wishlistProductIds,
-    setCartlistProducts,
-    setWishlistProducts,
-    cartlistProducts,
     checkCartList,
-    userId,
+    handleAddToList,
   } = useContext(ExclusiveContext);
-  const a = ["XS", "S", "M", "L", "XL"];
   const [productData, setProductData] = useState([]);
   const [hoveredImage, setHoveredImage] = useState("");
   const [clickImage, setClickImage] = useState("");
@@ -75,100 +59,6 @@ function ProductView() {
 
   const handleCartClick = (image) => {
     setClickImage(image);
-  };
-
-  // Add or Remove Items from Wishlist or Cart
-  const handleAddToList = async (productId, isWishlist = false) => {
-    if (!userId) {
-      console.log("User not logged in");
-      Swal.fire({
-        title: "User not logged in",
-        text: "You won't be able to revert this!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Login",
-        customClass: {
-          confirmButton: "custom-login-button",
-          cancelButton: "custom-login-button",
-        },
-      }).then((result) => {
-        if (result.isConfirmed) {
-          window.location.href = "/login";
-        }
-      });
-      return;
-    }
-
-    const product = productData.find((item) => item.id === productId);
-
-    if (!product) {
-      console.error("Product not found");
-      return;
-    }
-
-    const collectionName = isWishlist ? "Wishlist" : "Cartlist";
-    const listRef = doc(db, collectionName, userId);
-
-    try {
-      const listDoc = await getDoc(listRef);
-
-      if (listDoc.exists()) {
-        const existingProducts = listDoc.data().products || [];
-        const isProductInList = existingProducts.some(
-          (item) => item.productId === productId
-        );
-
-        if (isProductInList) {
-          // Remove the product if it's already in the list
-          const updatedProducts = existingProducts.filter(
-            (item) => item.productId !== productId
-          );
-
-          // Update the corresponding state
-          if (isWishlist) {
-            await updateDoc(listRef, { products: updatedProducts });
-            toast.success(
-              `Product removed from ${collectionName.toLowerCase()}`
-            );
-            setWishlistProducts(updatedProducts);
-          }
-        } else {
-          await updateDoc(listRef, {
-            products: arrayUnion({ productId, ...product }),
-          });
-          toast.success(`Product added to ${collectionName.toLowerCase()}`);
-
-          if (isWishlist) {
-            setWishlistProducts((prev) => [...prev, product]);
-          } else {
-            setCartlistProducts((prev) => [...prev, product]);
-            setCheckCartList(true);
-          }
-        }
-      } else {
-        await setDoc(listRef, {
-          products: [{ productId, ...product }],
-        });
-        toast.success(
-          `New ${collectionName.toLowerCase()} created and product added`
-        );
-
-        // Update the corresponding state
-        if (isWishlist) {
-          setWishlistProducts((prev) => [...prev, productId]);
-        } else {
-          setCartlistProducts((prev) => [...prev, productId]);
-          setCheckCartList(true);
-        }
-      }
-    } catch (error) {
-      console.error(
-        `Error updating ${collectionName.toLowerCase()}:`,
-        error.message
-      );
-    }
   };
 
   return (
