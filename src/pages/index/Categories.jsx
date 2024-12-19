@@ -97,7 +97,7 @@ function Categories() {
           </div>
         </div>
       </div>
-      {/* <div
+      <div
         className="flex w-full space-x-7 flex-nowrap overflow-x-auto overflow-y-hidden "
         ref={cardsRef}
         style={{ scrollbarWidth: "none" }}
@@ -119,8 +119,8 @@ function Categories() {
             </h1>
           </div>
         ))}
-      </div> */}
-      <div className="overflow-x-auto overflow-y-hidden" ref={cardsRef}>
+      </div>
+      {/* <div className="overflow-x-auto overflow-y-hidden" ref={cardsRef}>
         <div
           className="flex w-full space-x-7 flex-nowrap"
           style={{ scrollbarWidth: "none" }}
@@ -141,7 +141,7 @@ function Categories() {
             </div>
           ))}
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }
